@@ -7,7 +7,7 @@ map = np.zeros((h,w),dtype=int)
 map[-1,0] |= 16
 map[int(h/2)-1:int(h/2)+1,int(w/2)-1:int(w/2)+1] |= 32
 
-img = cv.imread("maze_92lon.png", cv.IMREAD_GRAYSCALE)
+img = cv.imread("./example maps/maze_92lon.png", cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path.exists()"
 
 ret, th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
