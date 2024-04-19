@@ -1,6 +1,8 @@
 import cv2 as cv
 import numpy as np
 import pandas as pd
+from mouse import mouse as mouse
+import time
 
 '''
 hh=16
@@ -91,10 +93,10 @@ def drawWalls(img, map, x, y, ppc, t=1):
     
     return img
 
-def drawMap(map,ppc=30):
+def drawMap(map,ppc=30): #ppc: pixel per cell
     GRAY = [10, 10, 10]
-    h,w = map.shape
-    blank = np.zeros((h*ppc, w*ppc, 3))
+    h,w = map.shape #gets the map size
+    blank = np.zeros((h*ppc, w*ppc, 3)) #creates an empty rgb image with the map size in pixels
 
     #draw grid lines
     for i in range(1, h):
@@ -108,6 +110,11 @@ def drawMap(map,ppc=30):
         for j in range(0,w):
             blank = drawWalls(blank, map, i, j, ppc, 2)
     return blank
+
+def drawMouse(mouse, img, ppc=30):
+    pos = mouse.where()
+    pixPos = (pos[0]*ppc + int(ppc/2), pos[1]*ppc + int(ppc/2))
+    return cv.circle(img, pixPos, 4, [0, 255, 0], -1)
 
 def loadMap(filename):
     try:
@@ -129,6 +136,21 @@ map1 = loadMap("./example maps/maze_92lon.csv")
 print(map1.shape)
 print(map1)
 
-cv.imshow("blank",drawMap(map1,ppc=30))
+steve = mouse((16,16),(0,15))
+
+print("steve is here")
+print(steve.where())
+
+cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
+cv.waitKey(333)
+
+for i in range(0,100):
+    cv.waitKey(1)
+    pos = steve.where()
+    print(map1[pos[1], pos[0]])
+    steve.move(map1[pos[1], pos[0]])
+    cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
+    cv.waitKey(333)
+
 cv.waitKey(0)
 cv.destroyAllWindows()
