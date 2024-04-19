@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 
+'''
 hh=16
 ww=16
 map = np.random.randint(0,16,(hh,ww))*0
@@ -21,6 +22,7 @@ map[0,1] &= ~4
 
 #set center 4 to be end
 map[int(hh/2) - 1:int(hh/2)+1, int(ww/2) - 1:int(ww/2)+1] |= 32
+'''
 
 def walls(z):
     #0 no walls, 1 top, 2 bottom, 4 left, 8 right, 16 start, 32 end
@@ -122,7 +124,7 @@ def saveMap(map, filename):
         f.write("\n")
 
 #saveMap(map, "map1.csv")
-map1 = loadMap("map1.csv")
+map1 = loadMap("./example maps/maze_92lon.csv")
 
 print(map1.shape)
 print(map1)
