@@ -1,117 +1,65 @@
 import cv2 as cv
 import numpy as np
-import pandas as pd
 
-hh=16
-ww=16
-map = np.random.randint(0,16,(hh,ww))*0
+h = 16
+w = 16
+map = np.zeros((h,w),dtype=int)
+map[-1,0] |= 16
+map[int(h/2)-1:int(h/2)+1,int(w/2)-1:int(w/2)+1] |= 32
 
-#set map boundary walls
-for i in range(0,ww):
-    map[0, i] |= 1
-    map[hh-1, i] |= 2
-for i in range(0,hh):
-    map[i,0] |= 4
-    map[i,ww-1] |= 8
+img = cv.imread("maze_92lon.png", cv.IMREAD_GRAYSCALE)
+assert img is not None, "file could not be read, check with os.path.exists()"
 
-#set top left to be start
-map[0,0] |= 16
-map[1,0] &= ~1
-map[0,1] &= ~4
+ret, th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
+rgb = cv.cvtColor(th1, cv.COLOR_GRAY2RGB)
 
-#set center 4 to be end
-map[int(hh/2) - 1:int(hh/2)+1, int(ww/2) - 1:int(ww/2)+1] |= 32
+s = th1.shape
+h_ = int(th1.shape[0]/(h*2))
+w_ = int(th1.shape[1]/(w*2))
 
-def walls(z):
-    #0 no walls, 1 top, 2 bottom, 4 left, 8 right, 16 start, 32 end
-    start = 0
-    end = 0
-    top = 0
-    bottom = 0
-    left = 0
-    right = 0
-    no_wall = 0
+for j in range(0,h):
+    h1 = int(th1.shape[0]/(h*2))*(j*2+1)
+    w1 = int(th1.shape[1]/(w*2))
 
-    if z & 1: top = 1
-    if z & 2: bottom = 1
-    if z & 4: left = 1
-    if z & 8: right = 1
-    if z & 16: start = 1
-    if z & 32: end = 1
-    if z == 0: no_wall = 1
+    m = np.where(th1[h1]>127,1,0)
+    b = th1[int(h1-(h_*0.8)):int(h1+(h_*0.8)),:]
+    v = np.var(b,axis=0)
+    mv = np.max(v)
+    v /= mv
+    k = np.where(v>0,0,1)
+    r = np.multiply(k,m)
 
-    return top, bottom, left, right, start, end, no_wall
+    for i in range(0,w):
+        if np.mean(r[w1*2*i+w1:min(w1*2*i+w1*3,r.size)])>0: map[j,i] |= 8
+        if np.mean(r[max(w1*2*i-w1,0):w1*2*i+w1])>0: map[j,i] |= 4
 
-def drawWalls(img, map, x, y, ppc, t=1):
-    RED = [0, 0, 255]
-    GREEN = [0, 255, 0]
-    BLUE = [255, 0, 0]
-    z = map[x, y] #note the image to array coordinates are transposed
-    top, bottom, left, right, start, end, no_wall = walls(z)
-    
-    #swap coordinates for drawing
-    x += y
-    y = x - y
-    x -= y
+for i in range(0,th1.shape[1]):
+    c = [0,0,255] if r[i] == 0 else [255,0,0]
+    rgb[h1,i] = c
 
-    COLOR = RED
+for j in range(0,w):
+    h1 = int(th1.shape[0]/(h*2))
+    w1 = int(th1.shape[1]/(w*2))*(j*2+1)
 
-    if z & 16: COLOR = BLUE
-    if z & 32: COLOR = GREEN
+    m = np.where(th1[:,w1]>127,1,0)
+    b = th1[:,int(w1-(w_*0.8)):int(w1+(w_*0.8))]
+    v = np.var(b,axis=1)
+    mv = np.max(v)
+    v /= mv
+    k = np.where(v>0,0,1)
+    r = np.multiply(k,m)
 
-    if z & 1:
-        x1 = x*ppc
-        x2 = x*ppc+ppc-1
-        y1 = y*ppc
-        y2 = y1
-        img = cv.line(img, (x1, y1), (x2, y2), COLOR, t)
-    
-    if z & 2:
-        x1 = x*ppc
-        x2 = x*ppc+ppc-1
-        y1 = y*ppc+ppc
-        y2 = y1
-        img = cv.line(img, (x1, y1), (x2, y2), COLOR, t)
-
-    if z & 4:
-        x1 = x*ppc
-        x2 = x1
-        y1 = y*ppc
-        y2 = y*ppc+ppc-1
-        img = cv.line(img, (x1, y1), (x2, y2), COLOR, t)
-
-    if z & 8:
-        x1 = x*ppc+ppc
-        x2 = x1
-        y1 = y*ppc
-        y2 = y*ppc+ppc-1
-        img = cv.line(img, (x1, y1), (x2, y2), COLOR, t)
-    
-    return img
-
-def drawMap(map,ppc=30):
-    GRAY = [10, 10, 10]
-    h,w = map.shape
-    blank = np.zeros((h*ppc, w*ppc, 3))
-
-    #draw grid lines
-    for i in range(1, h):
-        for j in range(0, w*ppc, 4):
-            blank[i*ppc,j,:] = GRAY
-    for i in range(0, h*ppc, 4):
-        for j in range(1, w):
-            blank[i,j*ppc,:] = GRAY
+    #print(r)
 
     for i in range(0,h):
-        for j in range(0,w):
-            blank = drawWalls(blank, map, i, j, ppc, 2)
-    return blank
+        if np.mean(r[h1*2*i+h1:min(h1*2*i+h1*3,r.size)])>0: map[i,j] |= 2
+        if np.mean(r[max(h1*2*i-h1,0):h1*2*i+h1])>0: map[i,j] |= 1
 
-def loadMap(filename):
-    try:
-        return np.array(pd.read_csv(filename, header=None))
-    except Exception as e:
-        print(e)
+print(map)
+    
+for i in range(0,th1.shape[0]):
+    c = [0,0,255] if r[i] == 0 else [255,0,0]
+    rgb[i,w1] = c
 
 def saveMap(map, filename):
     f = open(filename, "w")
@@ -121,12 +69,8 @@ def saveMap(map, filename):
             if(j != map.shape[1]-1): f.write(",")
         f.write("\n")
 
-#saveMap(map, "map1.csv")
-map1 = loadMap("map1.csv")
+saveMap(map, "map1.csv")
 
-print(map1.shape)
-print(map1)
-
-cv.imshow("blank",drawMap(map1,ppc=30))
+cv.imshow("maze", rgb)
 cv.waitKey(0)
 cv.destroyAllWindows()
