@@ -144,7 +144,7 @@ print(steve.where())
 cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
 cv.waitKey(333)
 
-for i in range(0,10):
+for i in range(0,1):
     cv.waitKey(1)
     pos = steve.where()
     print(map1[pos[1], pos[0]])

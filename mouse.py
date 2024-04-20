@@ -1,4 +1,5 @@
 import numpy as np
+from queue import Queue 
 
 FLOODFILL = 0
 DFS = 1
@@ -50,11 +51,16 @@ class mouse():
         return self.pos #(self.x, self.y)
     
     def flood(self):
-        queue = []
-        queue.append((int(self.size[0]/2), int(self.size[1]/2)))
-        queue.append((int((self.size[0]/2)), int((self.size[1]/2)-1)))
-        queue.append((int((self.size[0]/2)-1), int((self.size[1]/2)-1)))
-        queue.append((int((self.size[0]/2)-1), int((self.size[1]/2))))
+        queue = Queue()
+        queue.put((int(self.size[0]/2), int(self.size[1]/2)))
+        queue.put((int((self.size[0]/2)), int((self.size[1]/2)-1)))
+        queue.put((int((self.size[0]/2)-1), int((self.size[1]/2)-1)))
+        queue.put((int((self.size[0]/2)-1), int((self.size[1]/2))))
+        iteration = Queue()
+        iteration.put(0)
+        iteration.put(0)
+        iteration.put(0)
+        iteration.put(0)
         self.vistedMap=np.zeros(self.size,dtype=int)
 
         self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
@@ -62,37 +68,51 @@ class mouse():
         self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
         self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
 
-        self.floodHelper(self.vistedMap, queue, 0)
+        self.floodHelper(self.vistedMap, queue, iteration)
+
+
+        print("floodMap finish")
+        
+        
 
 
 
     def floodHelper(self, vistedMap, queue, iteration):
-        self.holding = queue.pop(0)
-        self.floodMap[self.holding]=iteration
+        self.holding = queue.get()
+        
+        thisiteration= iteration.get()
+        self.floodMap[self.holding]=thisiteration
 
-        holding=(self.holding[0]-1,self.holding[1])
-        if(self.wallMap[holding] & 1 and vistedMap[holding] == 1):#check if up is visited or blocked
-            queue.append((self.holding[0]-1,self.holding[1]))
-            vistedMap[(self.holding[0]-1,self.holding[1])]=1
+        holding2=(self.holding[0]-1,self.holding[1])
+        if(self.wallMap[self.holding] & 1 and vistedMap[holding2] == 1):#check if up is visited or blocked
+            queue.put((self.holding[0]-1,self.holding[1]))
+            vistedMap[holding2]=1
+            iteration.put(thisiteration+1)
 
-        holding=(self.holding[0]+1,self.holding[1])
-        if(self.wallMap[holding] & 2 and vistedMap[holding] == 1):#check if down is visited or blocked
-            queue.append(holding)
-            vistedMap[holding]=1
+        holding2=(self.holding[0]+1,self.holding[1])
+        if((self.wallMap[self.holding] & 2) and (vistedMap[holding2] == 1)):#check if down is visited or blocked
+            queue.put(holding2)
+            vistedMap[holding2]=1
+            iteration.put(thisiteration+1)
 
-        holding=(self.holding[0],self.holding[1]-1)
-        if(self.wallMap[holding] & 4 and vistedMap[holding] == 1):#check if left is visited or blocked
-            queue.append(holding)
-            vistedMap[holding]=1
+        holding2=(self.holding[0],self.holding[1]-1)
+        if(self.wallMap[self.holding] & 4 and vistedMap[holding2] == 1):#check if left is visited or blocked
+            queue.put(holding2)
+            vistedMap[holding2]=1
+            iteration.put(thisiteration+1)
 
-        holding=(self.holding[0],self.holding[1]+1)
-        if(self.wallMap[holding] & 8 and vistedMap[holding] == 1):#check if right is visited or blocked
-            queue.append(holding)
-            vistedMap[holding]=1
+        holding2=(self.holding[0],self.holding[1]+1)
+        if(self.wallMap[self.holding] & 8 and vistedMap[holding2] == 1):#check if right is visited or blocked
+            queue.put(holding2)
+            vistedMap[holding2]=1
+            iteration.put(thisiteration+1)
 
-        if(queue != None):
-            print(iteration)
-            self.floodHelper(vistedMap, queue, iteration+1)
+        print(self.floodMap)
+
+        if(not queue.empty()):
+            print("current iteration")
+            print(thisiteration)
+            self.floodHelper(vistedMap, queue, iteration)
              
 
         
