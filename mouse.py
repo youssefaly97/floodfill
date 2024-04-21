@@ -33,8 +33,9 @@ class mouse():
     
 
        
+    
 
-#         self.map = np.zeros(size,dtype=int)
+#         self.map = np.zeros(size,dtype=int)           #redundant and incompatible code with recursive flood fill
         
 
 #         #prep the map for flood fill (distance to center)
@@ -50,25 +51,24 @@ class mouse():
     def move(self, cell):
         self.wallMap[(self.pos[1],self.pos[0])] = cell
         print("running flood")
-        self.flood()
-        print("current floodMap")
+        self.flood()# calls recursive flood fill
+        print("current floodMap")#debug prints
         print(self.floodMap) 
         print("current wallMap")
         print(self.wallMap) 
         
 
-        self.dir = STOPPED
-        if   ((not (cell & 1)) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]) and (self.pos[1]-1) >=0):#check up
+        self.dir = STOPPED# if left unchange by end of if chain then no valid path
+        if   ((not (cell & 1)) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]) and (self.pos[1]-1) >=0):#check if up valid
             self.dir = UP
             print("going Up")
-        elif not (cell & 2) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]) and (self.pos[1]+1) <self.size[1]:#check down
-
+        elif not (cell & 2) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]) and (self.pos[1]+1) <self.size[1]:#check if down is valid
             self.dir = DOWN
             print("going Down")
-        elif not (cell & 8) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]) and (self.pos[0]+1) >=0:#check right
+        elif not (cell & 8) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]) and (self.pos[0]+1) >=0:#check if right is valid
             self.dir = RIGHT
             print("going Right")
-        elif not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check left
+        elif not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check if left is valid
             self.dir = LEFT
             print("going Left")
 
@@ -83,7 +83,7 @@ class mouse():
         return self.pos #(self.x, self.y)
 
 
-    def getNextMove(self):
+    def getNextMove(self):  #currently incompatible with recursive flood fill
         if self.map[self.pos] > self.map[self.pos[0],self.pos[1]-1]: #move up
             return UP
         if self.map[self.pos] > self.map[self.pos[0],self.pos[1]+1]: #move down
@@ -94,7 +94,7 @@ class mouse():
             return RIGHT
         
     
-    def moveOne(self):
+    def moveOne(self):#moves mouse to next position
         if self.dir == UP:
             self.pos = (self.pos[0], self.pos[1]-1)
         elif self.dir == DOWN:
@@ -103,42 +103,44 @@ class mouse():
             self.pos = (self.pos[0]-1, self.pos[1])
         elif self.dir == RIGHT:
             self.pos = (self.pos[0]+1, self.pos[1])
+        else :
+            print("no move found")
 
 
     def where(self, ppc=1):
         return self.pos #(self.x, self.y)
     
-    def isDone(self):
+    def isDone(self):#checks to see if mouse is at the center of the maze
         if(self.pos==(int(self.size[0]/2), int(self.size[1]/2)) or self.pos==(int(self.size[0]/2), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2))) :
-            return True
+            return True #mouse is at center
         else :
-            return False
+            return False #mouse is not at center
 
 
 
 
 
 
-    def flood(self):
-        queue = Queue()
-        queue.put((int(self.size[0]/2), int(self.size[1]/2)))
+    def flood(self):#setup for flood fill
+        queue = Queue()#what tile to fill next
+        queue.put((int(self.size[0]/2), int(self.size[1]/2)))## puts center in queue
         queue.put((int((self.size[0]/2)), int((self.size[1]/2)-1)))
         queue.put((int((self.size[0]/2)-1), int((self.size[1]/2)-1)))
         queue.put((int((self.size[0]/2)-1), int((self.size[1]/2))))
-        iteration = Queue()
+        iteration = Queue()# the depth of the tile
         iteration.put(0)
         iteration.put(0)
         iteration.put(0)
         iteration.put(0)
-        self.vistedMap=np.zeros(self.size,dtype=int)
+        self.vistedMap=np.zeros(self.size,dtype=int)#remembers what tiles is/was in queue
 
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
+        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1# set center as visited
         self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2-1))]=1
         self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2-1))]=1
         self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2))]=1
 
         # print(self.vistedMap)
-        self.floodHelper(self.vistedMap, queue, iteration)
+        self.floodHelper(self.vistedMap, queue, iteration)#enter recursive section of flood()
 
 
         
@@ -146,55 +148,55 @@ class mouse():
 
 
 
-    def floodHelper(self, vistedMap, queue, iteration):
-        holding = queue.get()
+    def floodHelper(self, vistedMap, queue, iteration):#main segment of flood()
+        holding = queue.get()#retirve position of current tile in maze
         
-        thisiteration= iteration.get()
-        self.floodMap[holding]=thisiteration
-        cell=self.wallMap[holding]
+        thisiteration= iteration.get()#retrive depth from queue
+        self.floodMap[holding]=thisiteration# update current tile
+        cell=self.wallMap[holding]#remember walls of current tile
         
 
-        holding2=(holding[0]-1,holding[1])
-        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
-            cell2=self.wallMap[holding2]
+        holding2=(holding[0]-1,holding[1])#retirve position of next tile in maze
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):#check if legal tile
+            cell2=self.wallMap[holding2]#check walls of upward tile
             if((not(cell & 1) and not(cell2 & 2)) and vistedMap[holding2] == 0):#check if up is visited or blocked
-                queue.put(holding2)
+                queue.put(holding2)#add tile to queue
                 vistedMap[holding2]=1
                 iteration.put(thisiteration+1)
 
 
-        holding2=(holding[0]+1,holding[1])
-        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
-            cell2=self.wallMap[holding2]
+        holding2=(holding[0]+1,holding[1])#retirve position of next tile in maze
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):#check if legal tile
+            cell2=self.wallMap[holding2]#check walls of downward tile
             if((not(cell & 2) and not(cell2 & 1)) and vistedMap[holding2] == 0):#check if down is visited or blocked
-                queue.put(holding2)
+                queue.put(holding2)#add tile to queue
                 vistedMap[holding2]=1
                 iteration.put(thisiteration+1)
 
-        holding2=(holding[0],holding[1]+1)
-        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
-            cell2=self.wallMap[holding2]
+        holding2=(holding[0],holding[1]+1)#retirve position of next tile in maze
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):#check if legal tile
+            cell2=self.wallMap[holding2]#check walls of left tile
             if((not(cell & 8) and not(cell2 & 4)) and vistedMap[holding2] == 0):#check if left is visited or blocked
-                queue.put(holding2)
+                queue.put(holding2)#add tile to queue
                 vistedMap[holding2]=1
                 iteration.put(thisiteration+1)
 
-        holding2=(holding[0],holding[1]-1)
-        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
-            cell2=self.wallMap[holding2]
+        holding2=(holding[0],holding[1]-1)#retirve position of next tile in maze
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):#check if legal tile
+            cell2=self.wallMap[holding2]#check walls of right tile
             if((not(cell & 4) and not(cell2 & 8)) and vistedMap[holding2] == 0):#check if right is visited or blocked
-                queue.put(holding2)
+                queue.put(holding2)#add tile to queue
                 vistedMap[holding2]=1
                 iteration.put(thisiteration+1)
 
 
 
-        if(not queue.empty()):
+        if(not queue.empty()):#is queue empty, if not continue recursion
             self.floodHelper(vistedMap, queue, iteration)
              
         
 
-    def canWeMove(self, dir, cell):
+    def canWeMove(self, dir, cell): #currently incompatible with recursive flood fill
         if (cell & 1) and dir == UP:
             return False
         if (cell & 8) and dir == RIGHT:

@@ -152,7 +152,7 @@ for i in range(0,5000):
     steve.move(map1[pos[1], pos[0]])
     cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
     cv.waitKey(222)
-    if(steve.isDone()):
+    if(steve.isDone()):#when center found exit for loop
         break
 
 cv.waitKey(0)
