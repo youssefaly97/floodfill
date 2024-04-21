@@ -73,7 +73,7 @@ class mouse():
             print("going Left")
 
         #if self.dir == self.getNextMove():
-        #    self.moveOne()
+        self.moveOne()
         #else:# self.canWeMove(self.getNextMove(), cell):
         #    self.dir = self.getNextMove()
         

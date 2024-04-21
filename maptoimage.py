@@ -144,7 +144,7 @@ print(steve.where())
 cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
 cv.waitKey(333)
 
-for i in range(0,500):
+for i in range(0,5000):
 
     cv.waitKey(1)
     pos = steve.where()
@@ -156,4 +156,4 @@ for i in range(0,500):
         break
 
 cv.waitKey(0)
-cv.destroyAllWindows()
+cv.destroyAllWindows()          
