@@ -132,6 +132,7 @@ def saveMap(map, filename):
 
 #saveMap(map, "map1.csv")
 map1 = loadMap("./example maps/maze_92lon.csv")
+map1[(15,0)] += 16
 
 print(map1.shape)
 print(map1)
@@ -141,18 +142,28 @@ steve = mouse((16,16),(0,15))
 print("steve is here")
 print(steve.where())
 
-cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
-cv.waitKey(333)
+#cv.imshow("Maze",drawMouse(steve, drawMap(map1,ppc=30)))
+#cv.waitKey(333)
 
-for i in range(0,5000):
+for i in range(0,5000) :#search to center Flood fill
 
     cv.waitKey(1)
     pos = steve.where()
     print(map1[pos[1], pos[0]])
-    steve.move(map1[pos[1], pos[0]])
-    cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
+    steve.move(map1[pos[1], pos[0]],"Goal")
+    cv.imshow("Flood fill search to center",drawMouse(steve, drawMap(map1,ppc=30)))
     cv.waitKey(222)
-    if(steve.isDone()):#when center found exit for loop
+    if(steve.isDone("Goal")):#when center found exit for loop
+        break
+
+for i in range(0,5000) :#search to start Flood fill
+    cv.waitKey(1)
+    pos = steve.where()
+    print(map1[pos[1], pos[0]])
+    steve.move(map1[pos[1], pos[0]],"Start")
+    cv.imshow("Flood fill search to start",drawMouse(steve, drawMap(map1,ppc=30)))
+    cv.waitKey(222)
+    if(steve.isDone("Start")):#when center found exit for loop
         break
 
 cv.waitKey(0)

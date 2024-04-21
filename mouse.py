@@ -1,4 +1,3 @@
-import time
 import numpy as np
 from queue import Queue 
 
@@ -18,17 +17,21 @@ class mouse():
         #self.x = start[0]
         #self.y = start[1]
         self.pos = start
-
         self.size = size
 
         self.wallMap = np.zeros(size,dtype=int)
+        self.knownMap = np.zeros(size,dtype=bool)
+        self.floodMap = np.zeros(size,dtype=int)
+        self.dir = STOPPED
+        self.targets=[(0,0)]
+    
         self.wallMap[(int(size[0]/2), int(size[1]/2))]+=32# sets target
         self.wallMap[(int(size[0]/2), int(size[1]/2-1))]+=32# sets target
         self.wallMap[(int(size[0]/2-1), int(size[1]/2-1))]+=32# sets target
         self.wallMap[(int(size[0]/2-1), int(size[1]/2))]+=32# sets target
+        self.wallMap[start] += 16
 
-        self.floodMap = np.zeros(size,dtype=int)
-        self.dir = STOPPED
+        
     
     
 
@@ -48,10 +51,10 @@ class mouse():
 #                 self.map[size[0]-i-1, j] = xd + yd
 #                 self.map[size[0]-i-1, size[1]-j-1] = xd + yd
     
-    def move(self, cell):
+    def move(self, cell, target):
         self.wallMap[(self.pos[1],self.pos[0])] = cell
         print("running flood")
-        self.flood()# calls recursive flood fill
+        self.flood(target)# calls recursive flood fill
         print("current floodMap")#debug prints
         print(self.floodMap) 
         print("current wallMap")
@@ -97,12 +100,16 @@ class mouse():
     def moveOne(self):#moves mouse to next position
         if self.dir == UP:
             self.pos = (self.pos[0], self.pos[1]-1)
+            self.knownMap[self.pos] = True
         elif self.dir == DOWN:
             self.pos = (self.pos[0], self.pos[1]+1)
+            self.knownMap[self.pos] = True
         elif self.dir == LEFT:
             self.pos = (self.pos[0]-1, self.pos[1])
+            self.knownMap[self.pos] = True
         elif self.dir == RIGHT:
             self.pos = (self.pos[0]+1, self.pos[1])
+            self.knownMap[self.pos] = True
         else :
             print("no move found")
 
@@ -110,34 +117,44 @@ class mouse():
     def where(self, ppc=1):
         return self.pos #(self.x, self.y)
     
-    def isDone(self):#checks to see if mouse is at the center of the maze
-        if(self.pos==(int(self.size[0]/2), int(self.size[1]/2)) or self.pos==(int(self.size[0]/2), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2))) :
-            return True #mouse is at center
-        else :
-            return False #mouse is not at center
+    def isDone(self, target):#checks to see if mouse is at the center of the maze
+        if target=="Goal" :
+            if(self.pos==(int(self.size[0]/2), int(self.size[1]/2)) or self.pos==(int(self.size[0]/2), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2-1)) or self.pos==(int(self.size[0]/2-1), int(self.size[1]/2))) :
+                return True #mouse is at goal
+        if target=="Start" :
+            if self.pos==(0,15) :
+                return True #mouse is at start
+        return False #mouse is not at goal or start
 
 
 
 
 
 
-    def flood(self):#setup for flood fill
+    def flood(self, target):#setup for flood fill
         queue = Queue()#what tile to fill next
-        queue.put((int(self.size[0]/2), int(self.size[1]/2)))## puts center in queue
-        queue.put((int((self.size[0]/2)), int((self.size[1]/2)-1)))
-        queue.put((int((self.size[0]/2)-1), int((self.size[1]/2)-1)))
-        queue.put((int((self.size[0]/2)-1), int((self.size[1]/2))))
         iteration = Queue()# the depth of the tile
-        iteration.put(0)
-        iteration.put(0)
-        iteration.put(0)
-        iteration.put(0)
+        
         self.vistedMap=np.zeros(self.size,dtype=int)#remembers what tiles is/was in queue
+        if (target=="Goal"):
+            queue.put((int(self.size[0]/2), int(self.size[1]/2)))## puts center in queue
+            queue.put((int((self.size[0]/2)), int((self.size[1]/2)-1)))
+            queue.put((int((self.size[0]/2)-1), int((self.size[1]/2)-1)))
+            queue.put((int((self.size[0]/2)-1), int((self.size[1]/2))))
 
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1# set center as visited
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2-1))]=1
-        self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2-1))]=1
-        self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2))]=1
+            iteration.put(0)
+            iteration.put(0)
+            iteration.put(0)
+            iteration.put(0)
+
+            self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1# set center as visited
+            self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2-1))]=1
+            self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2-1))]=1
+            self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2))]=1
+        elif (target=="Start") :
+            queue.put((15,0))
+            iteration.put(0)
+            self.vistedMap[(15,0)]=1
 
         # print(self.vistedMap)
         self.floodHelper(self.vistedMap, queue, iteration)#enter recursive section of flood()
