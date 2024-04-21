@@ -64,49 +64,54 @@ class mouse():
         self.vistedMap=np.zeros(self.size,dtype=int)
 
         self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
-        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2))]=1
+        self.vistedMap[(int(self.size[0]/2), int(self.size[1]/2-1))]=1
+        self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2-1))]=1
+        self.vistedMap[(int(self.size[0]/2-1), int(self.size[1]/2))]=1
 
         self.floodHelper(self.vistedMap, queue, iteration)
 
 
-        print("floodMap finish")
+        print("floodMap finished")
         
         
 
 
 
     def floodHelper(self, vistedMap, queue, iteration):
-        self.holding = queue.get()
+        holding = queue.get()
         
         thisiteration= iteration.get()
-        self.floodMap[self.holding]=thisiteration
-        cell=self.wallMap[self.holding]
+        self.floodMap[holding]=thisiteration
+        cell=self.wallMap[holding]
 
-        holding2=(self.holding[0]-1,self.holding[1])
-        if((cell & 1) and vistedMap[holding2] != 1):#check if up is visited or blocked
-            queue.put((self.holding[0]-1,self.holding[1]))
-            vistedMap[holding2]=1
-            iteration.put(thisiteration+1)
+        holding2=(holding[0]-1,holding[1])
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
+            if((cell | 1) and vistedMap[holding2] != 1):#check if up is visited or blocked
+                queue.put((holding[0]-1,holding[1]))
+                vistedMap[holding2]=1
+                iteration.put(thisiteration+1)
 
-        holding2=(self.holding[0]+1,self.holding[1])
-        if((cell & 2) and (vistedMap[holding2] != 1)):#check if down is visited or blocked
-            queue.put(holding2)
-            vistedMap[holding2]=1
-            iteration.put(thisiteration+1)
 
-        holding2=(self.holding[0],self.holding[1]-1)
-        if((cell & 4) and vistedMap[holding2] != 1):#check if left is visited or blocked
-            queue.put(holding2)
-            vistedMap[holding2]=1
-            iteration.put(thisiteration+1)
+        holding2=(holding[0]+1,holding[1])
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
+            if((cell | 2) and (vistedMap[holding2] != 1)):#check if down is visited or blocked
+                queue.put(holding2)
+                vistedMap[holding2]=1
+                iteration.put(thisiteration+1)
 
-        holding2=(self.holding[0],self.holding[1]+1)
-        if((cell & 8) and vistedMap[holding2] != 1):#check if right is visited or blocked
-            queue.put(holding2)
-            vistedMap[holding2]=1
-            iteration.put(thisiteration+1)
+        holding2=(holding[0],holding[1]-1)
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
+            if((cell | 4) and vistedMap[holding2] != 1):#check if left is visited or blocked
+                queue.put(holding2)
+                vistedMap[holding2]=1
+                iteration.put(thisiteration+1)
+
+        holding2=(holding[0],holding[1]+1)
+        if (holding2[0]< self.size[0] and holding2[0]>= 0 and holding2[1]< self.size[1] and holding2[1]>= 0):
+            if((cell | 8) and vistedMap[holding2] != 1):#check if right is visited or blocked
+                queue.put(holding2)
+                vistedMap[holding2]=1
+                iteration.put(thisiteration+1)
 
         print(self.floodMap)
 
