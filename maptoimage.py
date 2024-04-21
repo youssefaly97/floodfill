@@ -144,13 +144,15 @@ print(steve.where())
 cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
 cv.waitKey(333)
 
-for i in range(0,1):
+for i in range(0,500):
     cv.waitKey(1)
     pos = steve.where()
     print(map1[pos[1], pos[0]])
     steve.move(map1[pos[1], pos[0]])
     cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
-    cv.waitKey(333)
+    cv.waitKey(222)
+    if(steve.isDone()):
+        break
 
 cv.waitKey(0)
 cv.destroyAllWindows()
