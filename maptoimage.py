@@ -2,7 +2,6 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 from mouse import mouse as mouse
-import time
 
 '''
 hh=16
@@ -164,6 +163,27 @@ for i in range(0,5000) :#search to start Flood fill
     cv.imshow("Flood fill search to start",drawMouse(steve, drawMap(map1,ppc=30)))
     cv.waitKey(222)
     if(steve.isDone("Start")):#when center found exit for loop
+        break
+
+
+
+
+for i in range(0,5) :
+    pos = steve.where()
+    steve.findpath(self,visitedMap, pos, method)
+    
+    #check current tile
+    #what tiles adjacent
+    #what tile next
+    #is at end
+
+
+    
+    queue = steve.findpath(visited,map1[(pos[1], pos[0])] , "Flood search")
+
+    cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
+    cv.waitKey(222)
+    if(steve.isDone("Goal")):#when center found exit for loop
         break
 
 cv.waitKey(0)

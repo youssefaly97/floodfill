@@ -50,7 +50,39 @@ class mouse():
 #                 self.map[i, size[1]-j-1] = xd + yd
 #                 self.map[size[0]-i-1, j] = xd + yd
 #                 self.map[size[0]-i-1, size[1]-j-1] = xd + yd
-    
+
+    def findpath(self,visitedMap, pos, method):
+        self.wallMap[(self.pos[1],self.pos[0])]=cell
+        queue= Queue()
+        if method=="Flood search" :# flood fill method
+            print("searching for best path")#debug prints
+            print("current wallMap")
+            print(self.wallMap) 
+            print("current floodMap")
+            print(self.floodMap)
+            print("current knownMap")
+            print(self.floodMap)
+            holding=(pos)
+            
+            
+            if((((holding[1]-1)<16 and holding[1]-1)>=0)  and visitedMap[holding[0],holding[1]-1] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 1))) :#check up
+                queue.put((holding[0],holding[1]-1))
+            if((((holding[1]+1)<16 and holding[1]+1)>=0) and visitedMap[holding[0],holding[1]+1] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 2))) :#check down
+                queue.put((holding[0],holding[1]+1))
+            if((((holding[0]-1)<16 and holding[0]-1)>=0) and visitedMap[holding[0]-1,holding[1]] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 4))) :#check left
+                queue.put((holding[0]-1,holding[1]))
+            if((((holding[0]+1)<16 and holding[0]+1)>=0) and visitedMap[holding[0]-1,holding[1]] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 8))) :#check right
+                queue.put((holding[0]+1,holding[1]))
+            return queue
+
+            
+
+        
+
+
+            
+
+
     def move(self, cell, target):
         self.wallMap[(self.pos[1],self.pos[0])] = cell
         print("running flood")
@@ -82,8 +114,17 @@ class mouse():
         
 
 
-    def where(self, ppc=1):
+    def where(self):
         return self.pos #(self.x, self.y)
+    
+    def size(self):
+        return self.size
+    
+    def knownWalls(self):
+        return self.wallMap
+    
+    def knownTiles(self):
+        return self.knownMap
 
 
     def getNextMove(self):  #currently incompatible with recursive flood fill
@@ -128,6 +169,21 @@ class mouse():
 
 
 
+    def canWeMove(self, dir, cell): #currently incompatible with recursive flood fill
+        if (cell & 1) and dir == UP:
+            return False
+        if (cell & 8) and dir == RIGHT:
+            return False
+        if (cell & 2) and dir == DOWN:
+            return False
+        if cell & 4 and dir == LEFT:
+            return False
+        return True
+
+
+
+
+
 
 
 
@@ -160,8 +216,6 @@ class mouse():
         self.floodHelper(self.vistedMap, queue, iteration)#enter recursive section of flood()
 
 
-        
-        
 
 
 
@@ -210,16 +264,3 @@ class mouse():
 
         if(not queue.empty()):#is queue empty, if not continue recursion
             self.floodHelper(vistedMap, queue, iteration)
-             
-        
-
-    def canWeMove(self, dir, cell): #currently incompatible with recursive flood fill
-        if (cell & 1) and dir == UP:
-            return False
-        if (cell & 8) and dir == RIGHT:
-            return False
-        if (cell & 2) and dir == DOWN:
-            return False
-        if cell & 4 and dir == LEFT:
-            return False
-        return True
