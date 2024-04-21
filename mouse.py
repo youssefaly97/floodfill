@@ -51,28 +51,39 @@ class mouse():
 #                 self.map[size[0]-i-1, j] = xd + yd
 #                 self.map[size[0]-i-1, size[1]-j-1] = xd + yd
 
-    def findpath(self,visitedMap, pos, method):
-        self.wallMap[(self.pos[1],self.pos[0])]=cell
+    def findpath(self, visitedMap, pos, method):
+        self.pos=pos
+        self.wallMap[(self.pos[1],self.pos[0])]=self.wallMap[(pos[1],pos[0])]
         queue= Queue()
         if method=="Flood search" :# flood fill method
             print("searching for best path")#debug prints
-            print("current wallMap")
-            print(self.wallMap) 
-            print("current floodMap")
-            print(self.floodMap)
-            print("current knownMap")
-            print(self.floodMap)
+            # print("current wallMap")
+            # print(self.wallMap) 
+            # print("current floodMap")
+            # print(self.floodMap)
+            # print("current knownMap")
+            # print(self.floodMap)
+            
             holding=(pos)
-            
-            
-            if((((holding[1]-1)<16 and holding[1]-1)>=0)  and visitedMap[holding[0],holding[1]-1] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 1))) :#check up
-                queue.put((holding[0],holding[1]-1))
-            if((((holding[1]+1)<16 and holding[1]+1)>=0) and visitedMap[holding[0],holding[1]+1] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 2))) :#check down
-                queue.put((holding[0],holding[1]+1))
-            if((((holding[0]-1)<16 and holding[0]-1)>=0) and visitedMap[holding[0]-1,holding[1]] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 4))) :#check left
-                queue.put((holding[0]-1,holding[1]))
-            if((((holding[0]+1)<16 and holding[0]+1)>=0) and visitedMap[holding[0]-1,holding[1]] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 8))) :#check right
-                queue.put((holding[0]+1,holding[1]))
+            if(holding[1]-1>=0):
+                if( visitedMap[holding[0],holding[1]-1] != True and self.knownMap[holding[0],holding[1]-1] == True and (not (self.wallMap[(pos)] & 1))) :#check up
+                    queue.put((holding[0],holding[1]-1))
+                    print("going up")
+
+            if(holding[1]+1<16):
+                if(visitedMap[holding[0],holding[1]+1] != True and self.knownMap[holding[0],holding[1]+1] == True and (not (self.wallMap[(pos)] & 2))) :#check down
+                    queue.put((holding[0],holding[1]+1))
+                    print("going down")
+
+            if((holding[0]-1)>=0):
+                if(visitedMap[holding[0]-1,holding[1]] != True and self.knownMap[holding[0]-1,holding[1]] == True and (not (self.wallMap[(pos)] & 4))) :#check left
+                    queue.put((holding[0]-1,holding[1]))
+                    print("going left")
+
+            if((holding[0]+1)<16):
+                if( visitedMap[holding[0]+1,holding[1]] != True and self.knownMap[holding[0]+1,holding[1]] == True and (not (self.wallMap[(pos)] & 8))) :#check right
+                    queue.put((holding[0]+1,holding[1]))
+                    print("going right")
             return queue
 
             
@@ -85,12 +96,12 @@ class mouse():
 
     def move(self, cell, target):
         self.wallMap[(self.pos[1],self.pos[0])] = cell
-        print("running flood")
+        # print("running flood")
         self.flood(target)# calls recursive flood fill
-        print("current floodMap")#debug prints
-        print(self.floodMap) 
-        print("current wallMap")
-        print(self.wallMap) 
+        # print("current floodMap")#debug prints
+        # print(self.floodMap) 
+        # print("current wallMap")
+        # print(self.wallMap) 
         
 
         self.dir = STOPPED# if left unchange by end of if chain then no valid path
@@ -117,7 +128,7 @@ class mouse():
     def where(self):
         return self.pos #(self.x, self.y)
     
-    def size(self):
+    def getSize(self):
         return self.size
     
     def knownWalls(self):
