@@ -82,27 +82,28 @@ class mouse():
         
         thisiteration= iteration.get()
         self.floodMap[self.holding]=thisiteration
+        cell=self.wallMap[self.holding]
 
         holding2=(self.holding[0]-1,self.holding[1])
-        if(self.wallMap[self.holding] & 1 and vistedMap[holding2] == 1):#check if up is visited or blocked
+        if((cell & 1) and vistedMap[holding2] != 1):#check if up is visited or blocked
             queue.put((self.holding[0]-1,self.holding[1]))
             vistedMap[holding2]=1
             iteration.put(thisiteration+1)
 
         holding2=(self.holding[0]+1,self.holding[1])
-        if((self.wallMap[self.holding] & 2) and (vistedMap[holding2] == 1)):#check if down is visited or blocked
+        if((cell & 2) and (vistedMap[holding2] != 1)):#check if down is visited or blocked
             queue.put(holding2)
             vistedMap[holding2]=1
             iteration.put(thisiteration+1)
 
         holding2=(self.holding[0],self.holding[1]-1)
-        if(self.wallMap[self.holding] & 4 and vistedMap[holding2] == 1):#check if left is visited or blocked
+        if((cell & 4) and vistedMap[holding2] != 1):#check if left is visited or blocked
             queue.put(holding2)
             vistedMap[holding2]=1
             iteration.put(thisiteration+1)
 
         holding2=(self.holding[0],self.holding[1]+1)
-        if(self.wallMap[self.holding] & 8 and vistedMap[holding2] == 1):#check if right is visited or blocked
+        if((cell & 8) and vistedMap[holding2] != 1):#check if right is visited or blocked
             queue.put(holding2)
             vistedMap[holding2]=1
             iteration.put(thisiteration+1)
