@@ -130,6 +130,17 @@ def saveMap(map, filename):
             if(j != map.shape[1]-1): f.write(",")
         f.write("\n")
 
+def stackCleaner(stack, pos):
+    tempStack=[]
+    while(len(stack)!=0):
+        tempHold=stack.pop()
+        if(tempHold==pos):
+            tempStack.clear()
+        tempStack.append(tempHold)
+    while(len(tempStack)):
+        stack.append(tempStack.pop())
+    return stack
+
 #saveMap(map, "map1.csv")
 map1 = loadMap("./example maps/maze_92lon.csv")
 map1[(15,0)] += 16
@@ -144,48 +155,70 @@ print(steve.where())
 
 #cv.imshow("Maze",drawMouse(steve, drawMap(map1,ppc=30)))
 #cv.waitKey(333)
-
+stackToCenter = []
 for i in range(0,5000) :#search to center Flood fill
 
     cv.waitKey(1)
     pos = steve.where()
     #print(map1[pos[1], pos[0]])
-    steve.move(map1[pos[1], pos[0]],"Goal")
+    stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
+    stackToCenter= stackCleaner(stackToCenter,pos)
     cv.imshow("Flood fill search to center",drawMouse(steve, drawMap(map1,ppc=30)))
-    #cv.waitKey(1)
+    cv.waitKey(430)
     if(steve.isDone("Goal")):#when center found exit for loop
+        stackToCenter.append(steve.where())
         break
 
+stackToStart = []
 for i in range(0,5000) :#search to start Flood fill
     cv.waitKey(1)
     pos = steve.where()
     #print(map1[pos[1], pos[0]])
-    steve.move(map1[pos[1], pos[0]],"Start")
+    stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
+    stackToStart= stackCleaner(stackToStart,pos)
     cv.imshow("Flood fill search to start",drawMouse(steve, drawMap(map1,ppc=30)))
-    #cv.waitKey(1)
+    cv.waitKey(430)
     if(steve.isDone("Start")):#when center found exit for loop
+        stackToCenter.append(steve.where())
         break
 
 
 
 visitedMap = np.zeros(steve.getSize(),dtype=int)
 pos = steve.where()
-for i in range(0,5000) :
-    visitedMap[pos]=True
-    queue = steve.findpath(visitedMap, pos, "Flood search")
+print(stackToCenter)
+print("\n\n")
+print(stackToStart)
+if(len(stackToCenter)>len(stackToStart)):
+    for i in range(0,250) :
+        steve.moveHere(stackToStart.pop())
+        cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
+        cv.waitKey(322)
+        if(steve.isDone("Goal")):#when center found exit for loop
+            break
+else:
+    for i in range(0,250) :
+        steve.moveHere(stackToCenter.pop(0))
+        cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
+        cv.waitKey(322)
+        if(steve.isDone("Goal")):#when center found exit for loop
+            break
+
+
+    # visitedMap[pos]=True
+    # queue = steve.findpath(visitedMap, pos, "Flood search")
     
-    pos=queue.get()
-    print(pos)
+    # pos=queue.get()
+    # print(pos)
     #check current tile
     #what tiles adjacent
     #what tile next
     #is at end
 
 
-    cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
-    cv.waitKey(222)
-    if(steve.isDone("Goal")):#when center found exit for loop
-        break
+    
+    
 
 cv.waitKey(0)
-cv.destroyAllWindows()          
+cv.destroyAllWindows()       
+
