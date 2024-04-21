@@ -114,7 +114,7 @@ def drawMap(map,ppc=30): #ppc: pixel per cell
 def drawMouse(mouse, img, ppc=30):
     pos = mouse.where()
     pixPos = (pos[0]*ppc + int(ppc/2), pos[1]*ppc + int(ppc/2))
-    return cv.circle(img, pixPos, 4, [0, 255, 0], -1)
+    return cv.circle(img, pixPos, 4, [200, 0, 200], -1)
 
 def loadMap(filename):
     try:
@@ -145,6 +145,7 @@ cv.imshow("blank",drawMouse(steve, drawMap(map1,ppc=30)))
 cv.waitKey(333)
 
 for i in range(0,500):
+
     cv.waitKey(1)
     pos = steve.where()
     print(map1[pos[1], pos[0]])
