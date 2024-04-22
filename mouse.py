@@ -104,7 +104,7 @@ class mouse():
         # print("current wallMap")
         # print(self.wallMap) 
         
-
+        '''
         self.dir = STOPPED# if left unchange by end of if chain then no valid path
         #if self.floodMap[self.pos[1], self.pos[0]] <= self.getForwardCell() or (self.canWeMove(self.dir, self.getForwardCell()) == False):
         if   ((not (cell & 1)) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]) and (self.pos[1]-1) >=0):#check if up valid
@@ -119,8 +119,8 @@ class mouse():
         if not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check if left is valid
             self.dir = LEFT
             print("going Left")
-
-        #self.dir = self.getMinimumDir(cell)
+        '''
+        self.dir = self.getMinimumDir(cell)
 
         # if self.map[self.pos] > self.map[self.pos[0],self.pos[1]-1]: #move up
         #     return UP
@@ -144,28 +144,28 @@ class mouse():
     def getMinimumDir(self, cell):
         d = self.dir
         x = 1e12
-        '''
-        if self.pos[1]-1 >= 0            and not(cell & 1) and self.dir == UP:
+        
+        if self.pos[1]-1 >= 0            and not(cell & 1) and self.dir == UP and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]-1,self.pos[0]])
             if x2 < x:
                 x = x2
                 d = UP
-        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.dir == DOWN:
+        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.dir == DOWN and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]+1,self.pos[0]])
             if x2 < x:
                 x = x2
                 d = DOWN
-        if self.pos[0]-1 >= 0            and not(cell & 4) and self.dir == LEFT:
+        if self.pos[0]-1 >= 0            and not(cell & 4) and self.dir == LEFT and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]-1])
             if x2 < x:
                 x = x2
                 d = LEFT
-        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.dir == RIGHT:
+        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.dir == RIGHT and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]+1])
             if x2 < x:
                 x = x2
                 d = RIGHT
-        '''
+        
         if self.pos[1]-1 >= 0            and not(cell & 1) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]-1,self.pos[0]])
             if x2 < x:
