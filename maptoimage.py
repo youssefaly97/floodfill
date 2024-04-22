@@ -232,7 +232,7 @@ for i in range(0,5000) :#search to center Flood fill
     stackToCenter= stackCleaner(stackToCenter,pos)
     img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
     #img = drawMouseMap(steve,drawMouse(steve, img))
-    cv.imshow("Flood fill search to center", img)
+    cv.imshow("Flood fill search", img)
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
         stackToCenter.append(steve.where())
@@ -246,7 +246,7 @@ for i in range(0,5000) :#search to start Flood fill
     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
     stackToStart= stackCleaner(stackToStart,pos)
     img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
-    cv.imshow("Flood fill search to start",drawMouse(steve, img))
+    cv.imshow("Flood fill search",drawMouse(steve, img))
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Start")):#when center found exit for loop
         stackToCenter.append(steve.where())
@@ -266,10 +266,11 @@ print(shortestStack)
 
 for i in range(0,250) :
     steve.moveHere(shortestStack.pop(0))
-    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
-    cv.imshow("Flood fill find best path center",drawMouse(steve, img))
+    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=False)
+    cv.imshow("Flood fill search",drawMouse(steve, img))
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
+        
         break
 '''
 else:
