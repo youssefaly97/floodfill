@@ -259,14 +259,19 @@ pos = steve.where()
 print(stackToCenter)
 print("\n\n")
 print(stackToStart)
-if(len(stackToCenter)>len(stackToStart)):
-    for i in range(0,250) :
-        steve.moveHere(stackToStart.pop())
-        img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
-        cv.imshow("Flood fill find best path center",drawMouse(steve, img))
-        if cv.waitKey(0) == 27: break
-        if(steve.isDone("Goal")):#when center found exit for loop
-            break
+print("\n\n")
+shortestStack=stackMerger2(stackToCenter,stackToStart)
+print(shortestStack)
+# if(len(stackToCenter)>len(stackToStart)):
+
+for i in range(0,250) :
+    steve.moveHere(shortestStack.pop(0))
+    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+    cv.imshow("Flood fill find best path center",drawMouse(steve, img))
+    if cv.waitKey(0) == 27: break
+    if(steve.isDone("Goal")):#when center found exit for loop
+        break
+'''
 else:
     for i in range(0,250) :
         steve.moveHere(stackToCenter.pop(0))
@@ -277,16 +282,16 @@ else:
             break
 
 
-    # visitedMap[pos]=True
-    # queue = steve.findpath(visitedMap, pos, "Flood search")
+    visitedMap[pos]=True
+    queue = steve.findpath(visitedMap, pos, "Flood search")
     
-    # pos=queue.get()
-    # print(pos)
-    #check current tile
-    #what tiles adjacent
-    #what tile next
-    #is at end
-
+    pos=queue.get()
+    print(pos)
+    check current tile
+    what tiles adjacent
+    what tile next
+    is at end
+'''
 
     
     
