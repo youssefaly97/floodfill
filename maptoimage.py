@@ -175,7 +175,29 @@ def stackMerger(stacka,stackb):
             if tempa == tempb:
                 newStack.append(tempa)
 
-        
+def stackMerger2(stacka,stackb):
+    a = 0 #last common point index of stack a
+    b = 0
+    stackc = []
+    for i in range(len(stacka)):
+        for j in range(len(stackb)):
+            if stacka[i] == stackb[j]: #if we reach a common point, append the shorter segment
+                if (i-a)<(j-b):
+                    for k in range(a,i):
+                        stackc.append(stacka[k])
+                else:
+                    for k in range(b,j):
+                        stackc.append(stackb[k])
+                a = i #store common point to check next segment
+                b = j
+    #check remaining length of both stacks & take the shorter
+    if (len(stacka) - a)<(len(stackb) - b): 
+        for k in range(a,len(stacka)):
+            stackc.append(stacka[k])
+    else:
+        for k in range(b,len(stackb)):
+            stackc.append(stackb[k])
+    return stackc
 
 #saveMap(map, "map1.csv")
 map1 = loadMap("./example maps/maze_92lon.csv")

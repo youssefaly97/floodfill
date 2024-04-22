@@ -106,6 +106,7 @@ class mouse():
         
 
         self.dir = STOPPED# if left unchange by end of if chain then no valid path
+        #if self.floodMap[self.pos[1], self.pos[0]] <= self.getForwardCell() or (self.canWeMove(self.dir, self.getForwardCell()) == False):
         if   ((not (cell & 1)) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]) and (self.pos[1]-1) >=0):#check if up valid
             self.dir = UP
             print("going Up")
@@ -118,6 +119,8 @@ class mouse():
         if not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check if left is valid
             self.dir = LEFT
             print("going Left")
+
+        #self.dir = self.getMinimumDir(cell)
 
         # if self.map[self.pos] > self.map[self.pos[0],self.pos[1]-1]: #move up
         #     return UP
@@ -138,6 +141,52 @@ class mouse():
         #    self.dir = self.getNextMove()
         
 
+    def getMinimumDir(self, cell):
+        d = self.dir
+        x = 1e12
+        '''
+        if self.pos[1]-1 >= 0            and not(cell & 1) and self.dir == UP:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]-1,self.pos[0]])
+            if x2 < x:
+                x = x2
+                d = UP
+        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.dir == DOWN:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]+1,self.pos[0]])
+            if x2 < x:
+                x = x2
+                d = DOWN
+        if self.pos[0]-1 >= 0            and not(cell & 4) and self.dir == LEFT:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]-1])
+            if x2 < x:
+                x = x2
+                d = LEFT
+        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.dir == RIGHT:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]+1])
+            if x2 < x:
+                x = x2
+                d = RIGHT
+        '''
+        if self.pos[1]-1 >= 0            and not(cell & 1) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]-1,self.pos[0]])
+            if x2 < x:
+                x = x2
+                d = UP
+        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]+1,self.pos[0]])
+            if x2 < x:
+                x = x2
+                d = DOWN
+        if self.pos[0]-1 >= 0            and not(cell & 4) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]-1])
+            if x2 < x:
+                x = x2
+                d = LEFT
+        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
+            x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]+1])
+            if x2 < x:
+                x = x2
+                d = RIGHT
+        return d
 
     def where(self):
         return self.pos #(self.x, self.y)
@@ -291,3 +340,6 @@ class mouse():
 
         if(not queue.empty()):#is queue empty, if not continue recursion
             self.floodHelper(vistedMap, queue, iteration)
+
+    def getFloodMap(self):
+        return self.floodMap
