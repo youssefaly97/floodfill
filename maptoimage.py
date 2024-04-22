@@ -175,7 +175,15 @@ def stackMerger(stacka,stackb):
             if tempa == tempb:
                 newStack.append(tempa)
 
-def stackMerger2(stacka,stackb):
+def stackMerger2(stacka,stackb_,reverse=True):
+    stackb = []
+    if reverse:
+        for k in range(len(stackb_)-1,-1,-1):
+            stackb.append(stackb_[k])
+    else:
+        for k in range(0,len(stackb_)):
+            stackb.append(stackb_[k])
+        
     a = 0 #last common point index of stack a
     b = 0
     stackc = []
