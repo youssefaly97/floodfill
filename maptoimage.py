@@ -141,6 +141,19 @@ def stackCleaner(stack, pos):
         stack.append(tempStack.pop())
     return stack
 
+def stackMerger(stacka,stackb):
+    holdingstack=stackb
+    newStack=[]
+    stackb=holdingstack
+    for i in range(len(stacka)):
+        tempa=stacka.pop()
+        for j in range(len(stackb)):
+            tempb=stackb.pop()
+            if tempa == tempb:
+                newStack.append(tempa)
+
+        
+
 #saveMap(map, "map1.csv")
 map1 = loadMap("./example maps/maze_92lon.csv")
 map1[(15,0)] += 16

@@ -74,7 +74,7 @@ class mouse():
                 if( visitedMap[holding[0]+1,holding[1]] != True and self.knownMap[holding[0]+1,holding[1]] == True and (not (self.wallMap[(pos)] & 8))) :#check right
                     queue.put((holding[0]+1,holding[1]))
                     print("going right")
-                    
+
             if(holding[1]+1<16):
                 if(visitedMap[holding[0],holding[1]+1] != True and self.knownMap[holding[0],holding[1]+1] == True and (not (self.wallMap[(pos)] & 2))) :#check down
                     queue.put((holding[0],holding[1]+1))
@@ -87,8 +87,6 @@ class mouse():
 
             
             return queue
-
-            canWeMove(self, dir, cell)
 
         
 
@@ -111,15 +109,26 @@ class mouse():
         if   ((not (cell & 1)) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]-1,self.pos[0]]) and (self.pos[1]-1) >=0):#check if up valid
             self.dir = UP
             print("going Up")
-        elif not (cell & 8) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]) and (self.pos[0]+1) >=0:#check if right is valid
+        if not (cell & 8) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]) and (self.pos[0]+1) >=0:#check if right is valid
             self.dir = RIGHT
             print("going Right")
-        elif not (cell & 2) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]) and (self.pos[1]+1) <self.size[1]:#check if down is valid
+        if not (cell & 2) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]) and (self.pos[1]+1) <self.size[1]:#check if down is valid
             self.dir = DOWN
             print("going Down")
-        elif not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check if left is valid
+        if not (cell & 4) and (self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]-1]) and (self.pos[0]-1) <self.size[0]:#check if left is valid
             self.dir = LEFT
             print("going Left")
+
+        # if self.map[self.pos] > self.map[self.pos[0],self.pos[1]-1]: #move up
+        #     return UP
+        # if self.map[self.pos] > self.map[self.pos[0],self.pos[1]+1]: #move down
+        #     return DOWN
+        # if self.map[self.pos] > self.map[self.pos[0]-1,self.pos[1]]: #move left
+        #     return LEFT
+        # if self.map[self.pos] > self.map[self.pos[0]+1,self.pos[1]]: #move right
+        #     return RIGHT
+
+
 
         #if self.dir == self.getNextMove():
         temp=self.pos 
