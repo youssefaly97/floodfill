@@ -33,6 +33,9 @@ for j in range(0,h):
     for i in range(0,w):
         if np.mean(r[w1*2*i+w1:min(w1*2*i+w1*3,r.size)])>0: map[j,i] |= 8 #column-wise-mean centered about the wall index (w1) (between maze columns), assigns right walls
         if np.mean(r[max(w1*2*i-w1,0):w1*2*i+w1])>0: map[j,i] |= 4 # assigns left walls
+    for i in range(0,w):
+        if v[min(w1*2*i+w1,v.size)]>0: map[j,i] |= 64 #column-wise-mean centered about the wall index (w1) (between maze columns), assigns right walls
+        #if np.mean(v[max(w1*2*i-w1,0):w1*2*i+w1])>0: map[j,i] |= 64 # assigns left walls
 
 #draws a red line through the row in question, changes to blue at a wall
 for i in range(0,th1.shape[1]):
@@ -58,6 +61,10 @@ for j in range(0,w):
         if np.mean(r[h1*2*i+h1:min(h1*2*i+h1*3,r.size)])>0: map[i,j] |= 2
         if np.mean(r[max(h1*2*i-h1,0):h1*2*i+h1])>0: map[i,j] |= 1
 
+    for i in range(0,h):
+        if v[min(h1*2*i+h1,v.size)]>0: map[i,j] |= 64
+        #if np.mean(v[max(h1*2*i-h1,0):h1*2*i+h1])>0: map[i,j] |= 64
+
 #map is ready
 print(map)
     
@@ -75,7 +82,7 @@ def saveMap(map, filename):
             if(j != map.shape[1]-1): f.write(",")
         f.write("\n")
 
-saveMap(map, "map1.csv")
+saveMap(map, "./example maps/maze_92lon.csv")
 
 #draw map in a window
 cv.imshow("maze", rgb)

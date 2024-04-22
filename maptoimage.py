@@ -94,9 +94,14 @@ def drawWalls(img, map, x, y, ppc, t=1):
     return img
 
 def drawMap(map,ppc=30): #ppc: pixel per cell
-    GRAY = [10, 10, 10]
+    GRAY = np.array([100, 100, 100])/255
+    LIGHT = np.array([50, 50, 50])/255
     h,w = map.shape #gets the map size
     blank = np.zeros((h*ppc, w*ppc, 3)) #creates an empty rgb image with the map size in pixels
+
+    for i in range(0, h):
+        for j in range(0, w):
+            if map[i,j] & 64: blank[i*ppc:i*ppc+ppc,j*ppc:j*ppc+ppc] = LIGHT
 
     #draw grid lines
     for i in range(1, h):
@@ -111,10 +116,28 @@ def drawMap(map,ppc=30): #ppc: pixel per cell
             blank = drawWalls(blank, map, i, j, ppc, 2)
     return blank
 
-def drawMouse(mouse, img, ppc=30):
+'''
+def drawMouseMap(mouse, img, ppc=30):
+    img_ = img
+    map = mouse.getFloodMap()
+    for i in range(0, map.shape[0]):
+        for j in range(0, map.shape[1]):
+            img_ = cv.putText(img_, str(map[i,j]), (j*ppc + int(ppc/2) - 12, i*ppc + int(ppc/2) + 12), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 1)
+    return img_
+'''
+
+def drawMouse(mouse, img, drawMouseMap=False, ppc=30):
     pos = mouse.where()
     pixPos = (pos[0]*ppc + int(ppc/2), pos[1]*ppc + int(ppc/2))
-    return cv.circle(img, pixPos, 4, [200, 0, 200], -1)
+
+    img_ = img
+    if drawMouseMap:
+        map = mouse.getFloodMap()
+        for i in range(0, map.shape[0]):
+            for j in range(0, map.shape[1]):
+                img_ = cv.putText(img_, str(map[i,j]), (j*ppc + int(ppc/2) - 12, i*ppc + int(ppc/2) + 12), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 1)
+
+    return cv.circle(img_, pixPos, 4, [200, 0, 200], -1)
 
 def loadMap(filename):
     try:
@@ -169,6 +192,7 @@ print(steve.where())
 #cv.imshow("Maze",drawMouse(steve, drawMap(map1,ppc=30)))
 #cv.waitKey(333)
 stackToCenter = []
+#img = drawMap(map1,ppc=30)
 for i in range(0,5000) :#search to center Flood fill
 
     cv.waitKey(1)
@@ -176,8 +200,10 @@ for i in range(0,5000) :#search to center Flood fill
     #print(map1[pos[1], pos[0]])
     stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
     stackToCenter= stackCleaner(stackToCenter,pos)
-    cv.imshow("Flood fill search to center",drawMouse(steve, drawMap(map1,ppc=30)))
-    cv.waitKey(430)
+    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+    #img = drawMouseMap(steve,drawMouse(steve, img))
+    cv.imshow("Flood fill search to center", img)
+    if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
         stackToCenter.append(steve.where())
         break
@@ -189,8 +215,9 @@ for i in range(0,5000) :#search to start Flood fill
     #print(map1[pos[1], pos[0]])
     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
     stackToStart= stackCleaner(stackToStart,pos)
-    cv.imshow("Flood fill search to start",drawMouse(steve, drawMap(map1,ppc=30)))
-    cv.waitKey(430)
+    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+    cv.imshow("Flood fill search to start",drawMouse(steve, img))
+    if cv.waitKey(0) == 27: break
     if(steve.isDone("Start")):#when center found exit for loop
         stackToCenter.append(steve.where())
         break
@@ -205,15 +232,17 @@ print(stackToStart)
 if(len(stackToCenter)>len(stackToStart)):
     for i in range(0,250) :
         steve.moveHere(stackToStart.pop())
-        cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
-        cv.waitKey(322)
+        img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+        cv.imshow("Flood fill find best path center",drawMouse(steve, img))
+        if cv.waitKey(0) == 27: break
         if(steve.isDone("Goal")):#when center found exit for loop
             break
 else:
     for i in range(0,250) :
         steve.moveHere(stackToCenter.pop(0))
-        cv.imshow("Flood fill find best path center",drawMouse(steve, drawMap(map1,ppc=30)))
-        cv.waitKey(322)
+        img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+        cv.imshow("Flood fill find best path center",drawMouse(steve, img))
+        if cv.waitKey(0) == 27: break
         if(steve.isDone("Goal")):#when center found exit for loop
             break
 
