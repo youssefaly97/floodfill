@@ -164,18 +164,8 @@ def stackCleaner(stack, pos):
         stack.append(tempStack.pop())
     return stack
 
-def stackMerger(stacka,stackb):
-    holdingstack=stackb
-    newStack=[]
-    stackb=holdingstack
-    for i in range(len(stacka)):
-        tempa=stacka.pop()
-        for j in range(len(stackb)):
-            tempb=stackb.pop()
-            if tempa == tempb:
-                newStack.append(tempa)
 
-def stackMerger2(stacka,stackb_,reverse=True):
+def stackMerger(stacka,stackb_,reverse=True):
     stackb = []
     if reverse:
         for k in range(len(stackb_)-1,-1,-1):
@@ -218,6 +208,8 @@ steve = mouse((16,16),(0,15))
 
 print("steve is here")
 print(steve.where())
+img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=False)
+cv.imshow("Maze",drawMouse(steve, img))
 
 #cv.imshow("Maze",drawMouse(steve, drawMap(map1,ppc=30)))
 #cv.waitKey(333)
@@ -228,9 +220,10 @@ for i in range(0,5000) :#search to center Flood fill
     cv.waitKey(1)
     pos = steve.where()
     #print(map1[pos[1], pos[0]])
-    stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
     stackToCenter= stackCleaner(stackToCenter,pos)
-    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
+    stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
+    
     #img = drawMouseMap(steve,drawMouse(steve, img))
     cv.imshow("Flood fill search", img)
     if cv.waitKey(0) == 27: break
@@ -242,11 +235,12 @@ stackToStart = []
 for i in range(0,5000) :#search to start Flood fill
     cv.waitKey(1)
     pos = steve.where()
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
+    cv.imshow("Flood fill search",drawMouse(steve, img))
     #print(map1[pos[1], pos[0]])
     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
     stackToStart= stackCleaner(stackToStart,pos)
-    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
-    cv.imshow("Flood fill search",drawMouse(steve, img))
+    
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Start")):#when center found exit for loop
         stackToCenter.append(steve.where())
@@ -260,20 +254,18 @@ print(stackToCenter)
 print("\n\n")
 print(stackToStart)
 print("\n\n")
-shortestStack=stackMerger2(stackToCenter,stackToStart)
+shortestStack=stackMerger(stackToCenter,stackToStart)
 print(shortestStack)
-# if(len(stackToCenter)>len(stackToStart)):
 
 for i in range(0,250) :
     steve.moveHere(shortestStack.pop(0))
-    img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=False)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=False)
     cv.imshow("Flood fill search",drawMouse(steve, img))
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
         
         break
 '''
-else:
     for i in range(0,250) :
         steve.moveHere(stackToCenter.pop(0))
         img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)

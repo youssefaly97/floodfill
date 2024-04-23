@@ -199,6 +199,9 @@ class mouse():
     
     def knownTiles(self):
         return self.knownMap
+    
+    def knownWalls(self):
+        return self.wallMap
 
 
     def getNextMove(self):  #currently incompatible with recursive flood fill
