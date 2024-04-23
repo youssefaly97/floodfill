@@ -234,9 +234,9 @@ for i in range(0,5000) :#search to center Flood fill
 stackToStart = []
 for i in range(0,5000) :#search to start Flood fill
     cv.waitKey(1)
-    pos = steve.where()
     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
     cv.imshow("Flood fill search",drawMouse(steve, img))
+    pos = steve.where()
     #print(map1[pos[1], pos[0]])
     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
     stackToStart= stackCleaner(stackToStart,pos)
@@ -247,44 +247,28 @@ for i in range(0,5000) :#search to start Flood fill
         break
 
 
-
+'''
 visitedMap = np.zeros(steve.getSize(),dtype=int)
 pos = steve.where()
 print(stackToCenter)
 print("\n\n")
 print(stackToStart)
 print("\n\n")
+'''
 shortestStack=stackMerger(stackToCenter,stackToStart)
 print(shortestStack)
 
+
 for i in range(0,250) :
-    steve.moveHere(shortestStack.pop(0))
     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=False)
     cv.imshow("Flood fill search",drawMouse(steve, img))
+    steve.moveHere(shortestStack.pop(0))
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
-        
+        img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=False)
+        cv.imshow("Flood fill search",drawMouse(steve, img))
         break
-'''
-    for i in range(0,250) :
-        steve.moveHere(stackToCenter.pop(0))
-        img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=True)
-        cv.imshow("Flood fill find best path center",drawMouse(steve, img))
-        if cv.waitKey(0) == 27: break
-        if(steve.isDone("Goal")):#when center found exit for loop
-            break
 
-
-    visitedMap[pos]=True
-    queue = steve.findpath(visitedMap, pos, "Flood search")
-    
-    pos=queue.get()
-    print(pos)
-    check current tile
-    what tiles adjacent
-    what tile next
-    is at end
-'''
 
     
     
