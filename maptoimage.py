@@ -4,28 +4,6 @@ import pandas as pd
 from mouse import mouse as mouse
 from queue import Queue 
 
-'''
-hh=16
-ww=16
-map = np.random.randint(0,16,(hh,ww))*0
-
-#set map boundary walls
-for i in range(0,ww):
-    map[0, i] |= 1
-    map[hh-1, i] |= 2
-for i in range(0,hh):
-    map[i,0] |= 4
-    map[i,ww-1] |= 8
-
-#set top left to be start
-map[0,0] |= 16
-map[1,0] &= ~1
-map[0,1] &= ~4
-
-#set center 4 to be end
-map[int(hh/2) - 1:int(hh/2)+1, int(ww/2) - 1:int(ww/2)+1] |= 32
-'''
-
 def walls(z):
     #0 no walls, 1 top, 2 bottom, 4 left, 8 right, 16 start, 32 end
     start = 0
@@ -116,17 +94,7 @@ def drawMap(map,ppc=30): #ppc: pixel per cell
             blank = drawWalls(blank, map, i, j, ppc, 2)
     return blank
 
-'''
-def drawMouseMap(mouse, img, ppc=30):
-    img_ = img
-    map = mouse.getFloodMap()
-    for i in range(0, map.shape[0]):
-        for j in range(0, map.shape[1]):
-            img_ = cv.putText(img_, str(map[i,j]), (j*ppc + int(ppc/2) - 12, i*ppc + int(ppc/2) + 12), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 1)
-    return img_
-'''
-
-def drawMouse(mouse, img, drawMouseMap=False, ppc=30):
+def drawMouse(mouse, img, prevpos=[], drawMouseMap=False, ppc=30):
     pos = mouse.where()
     pixPos = (pos[0]*ppc + int(ppc/2), pos[1]*ppc + int(ppc/2))
 
@@ -136,6 +104,9 @@ def drawMouse(mouse, img, drawMouseMap=False, ppc=30):
         for i in range(0, map.shape[0]):
             for j in range(0, map.shape[1]):
                 img_ = cv.putText(img_, str(map[i,j]), (j*ppc + int(ppc/2) - 12, i*ppc + int(ppc/2) + 12), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 1)
+
+    for posI in prevpos:
+        img_ = cv.circle(img_, (posI[0]*ppc+ int(ppc/2), posI[1]*ppc+ int(ppc/2)), 4, [0.5, 0, 0.5], -1)
 
     return cv.circle(img_, pixPos, 4, [200, 0, 200], -1)
 
@@ -163,7 +134,6 @@ def stackCleaner(stack, pos):
     while(len(tempStack)):
         stack.append(tempStack.pop())
     return stack
-
 
 def stackMerger(stacka,stackb_,reverse=True):
     stackb = []
@@ -197,7 +167,6 @@ def stackMerger(stacka,stackb_,reverse=True):
             stackc.append(stackb[k])
     return stackc
 
-#saveMap(map, "map1.csv")
 map1 = loadMap("./example maps/maze_92lon.csv")
 map1[(15,0)] += 16
 
@@ -205,23 +174,20 @@ print(map1.shape)
 print(map1)
 
 steve = mouse((16,16),(0,15))
-
-print("steve is here")
+print("Steve is here")
 print(steve.where())
-img = drawMouse(steve, drawMap(map1,ppc=30), drawMouseMap=False)
-cv.imshow("Maze",drawMouse(steve, img))
 
-#cv.imshow("Maze",drawMouse(steve, drawMap(map1,ppc=30)))
-#cv.waitKey(333)
+img = drawMouse(steve, drawMap(map1, ppc=30), drawMouseMap=False)
+cv.imshow("Maze", drawMouse(steve, img))
+
 stackToCenter = []
 #img = drawMap(map1,ppc=30)
 for i in range(0,5000) :#search to center Flood fill
-
     cv.waitKey(1)
     pos = steve.where()
     #print(map1[pos[1], pos[0]])
-    stackToCenter= stackCleaner(stackToCenter,pos)
-    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
+    stackToCenter = stackCleaner(stackToCenter,pos)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToCenter, drawMouseMap=True)
     cv.imshow("Flood fill search", img)
     stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
     
@@ -235,12 +201,12 @@ for i in range(0,5000) :#search to center Flood fill
 stackToStart = []
 for i in range(0,5000) :#search to start Flood fill
     cv.waitKey(1)
-    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToStart, drawMouseMap=True)
     cv.imshow("Flood fill search",drawMouse(steve, img))
     pos = steve.where()
     #print(map1[pos[1], pos[0]])
     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
-    stackToStart= stackCleaner(stackToStart,pos)
+    stackToStart = stackCleaner(stackToStart,pos)
     
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Start")):#when center found exit for loop
@@ -259,14 +225,14 @@ print("\n\n")
 shortestStack=stackMerger(stackToCenter,stackToStart)
 print(shortestStack)
 
-
+finalStack = []
 for i in range(0,250) :
-    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=False)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
     cv.imshow("Flood fill search",drawMouse(steve, img))
-    steve.moveHere(shortestStack.pop(0))
+    finalStack.append(steve.moveHere(shortestStack.pop(0)))
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
-        img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=False)
+        img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
         cv.imshow("Flood fill search",drawMouse(steve, img))
         break
 
