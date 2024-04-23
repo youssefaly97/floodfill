@@ -222,10 +222,11 @@ for i in range(0,5000) :#search to center Flood fill
     #print(map1[pos[1], pos[0]])
     stackToCenter= stackCleaner(stackToCenter,pos)
     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), drawMouseMap=True)
+    cv.imshow("Flood fill search", img)
     stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
     
     #img = drawMouseMap(steve,drawMouse(steve, img))
-    cv.imshow("Flood fill search", img)
+    
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
         stackToCenter.append(steve.where())
@@ -269,7 +270,14 @@ for i in range(0,250) :
         cv.imshow("Flood fill search",drawMouse(steve, img))
         break
 
+max = mouse((16,16),(0,15))
 
+print("max is here")
+print(max.where())
+#............................................................ start of breadth search
+for i in range(0,5):
+    img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+    cv.imshow("breadth search",drawMouse(max, img))
     
     
 
