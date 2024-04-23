@@ -275,10 +275,24 @@ max = mouse((16,16),(0,15))
 print("max is here")
 print(max.where())
 #............................................................ start of breadth search
+#create stack
 for i in range(0,5):
     img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
-    cv.imshow("breadth search",drawMouse(max, img))
+    cv.imshow("Breathe search",drawMouse(max, img))
     
+    #tempStack=stack from current position to current target
+    #loop till tempStack is empty
+        #max.breadthMoveHere(tempStack)
+        #img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+        #cv.imshow("Breadth search",drawMouse(max, img))
+    #add all new branches to stack
+
+    if cv.waitKey(0) == 27: break
+    if(max.isDone("Goal")):#when center found exit for loop
+        img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+        cv.imshow("Breathe search",drawMouse(max, img))
+        break
+
     
 
 cv.waitKey(0)
