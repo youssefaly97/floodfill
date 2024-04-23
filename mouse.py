@@ -31,25 +31,7 @@ class mouse():
         self.wallMap[(int(size[0]/2-1), int(size[1]/2))]+=32# sets target
         self.wallMap[start] += 16
 
-        
-    
-    
 
-       
-    
-
-#         self.map = np.zeros(size,dtype=int)           #redundant and incompatible code with recursive flood fill
-        
-
-#         #prep the map for flood fill (distance to center)
-#         for i in range(0, int(size[0]/2)):
-#             for j in range(0, int(size[1]/2)):
-#                 xd = abs((int(size[0]/2)-1 - i))
-#                 yd = abs(int(size[1]/2)-1 - j)
-#                 self.map[i,j] = xd + yd
-#                 self.map[i, size[1]-j-1] = xd + yd
-#                 self.map[size[0]-i-1, j] = xd + yd
-#                 self.map[size[0]-i-1, size[1]-j-1] = xd + yd
 
     def findpath(self, visitedMap, pos, method):
         self.pos=pos
@@ -57,12 +39,7 @@ class mouse():
         queue= Queue()
         if method=="Flood search" :# flood fill method
             print("searching for best path")#debug prints
-            # print("current wallMap")
-            # print(self.wallMap) 
-            # print("current floodMap")
-            # print(self.floodMap)
-            # print("current knownMap")
-            # print(self.floodMap)
+
             
             holding=(pos)
             if(holding[1]-1>=0):
@@ -179,7 +156,7 @@ class mouse():
 
 
 
-    def canWeMove(self, dir, cell): #currently incompatible with recursive flood fill
+    def canWeMove(self, dir, cell): #currently incompatible with recursive flood fill 
         if (cell & 1) and dir == UP:
             return False
         if (cell & 8) and dir == RIGHT:
@@ -317,5 +294,3 @@ class mouse():
                 x = x2
                 d = RIGHT
         return d
-
-
