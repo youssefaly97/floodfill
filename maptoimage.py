@@ -167,11 +167,11 @@ def stackMerger(stacka,stackb_,reverse=True):
             stackc.append(stackb[k])
     return stackc
 
-map1 = loadMap("./example maps/maze_92lon.csv")
+map1 = loadMap("./example maps/maze_93apec.csv")
 map1[(15,0)] += 16
 
-print(map1.shape)
-print(map1)
+#print(map1.shape)
+#print(map1)
 
 steve = mouse((16,16),(0,15))
 print("Steve is here")
@@ -195,6 +195,7 @@ for i in range(0,5000) :#search to center Flood fill
     
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Goal")):#when center found exit for loop
+        print("Flood fill start to goal moves: " + str(i))
         stackToCenter.append(steve.where())
         break
 
@@ -210,6 +211,7 @@ for i in range(0,5000) :#search to start Flood fill
     
     if cv.waitKey(0) == 27: break
     if(steve.isDone("Start")):#when center found exit for loop
+        print("Flood fill goal to start moves: " + str(i))
         stackToCenter.append(steve.where())
         break
 
@@ -223,7 +225,7 @@ print(stackToStart)
 print("\n\n")
 '''
 shortestStack=stackMerger(stackToCenter,stackToStart)
-print(shortestStack)
+#print(shortestStack)
 
 finalStack = []
 for i in range(0,250) :
@@ -234,6 +236,7 @@ for i in range(0,250) :
     if(steve.isDone("Goal")):#when center found exit for loop
         img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
         cv.imshow("Flood fill search",drawMouse(steve, img))
+        print("Flood fill optimal path moves: " + str(i))
         break
 
 
@@ -291,6 +294,7 @@ for i in range(0,500):
         sam.depthOfSearch(map1[pos[1], pos[0]],"Goal")
         img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
         cv.imshow("Depth search",drawMouse(sam, img))
+        print("DFS start to goal moves: " + str(i))
         break
 
 
@@ -305,13 +309,14 @@ for i in range(0,500):
     if(sam.isDone("Start")):#when center found exit for loop
         img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
         cv.imshow("Depth search",drawMouse(sam, img))
+        print("DFS goal to start moves: " + str(i))
         break
 
 finalStack=[]
 stackOfPositions=[]
 stackOfPositions=sam.getStackOfPositions()
-print("stackOfPositions")
-print(stackOfPositions)
+#print("stackOfPositions")
+#print(stackOfPositions)
 #img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
 for i in range(0,500):
     temp=sam.moveHere(stackOfPositions.pop())
@@ -323,6 +328,7 @@ for i in range(0,500):
     if(sam.isDone("Goal")):#when center found exit for loop
         img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
         cv.imshow("Depth search",drawMouse(sam, img))
+        print("DFS best path moves: " + str(i))
         break
 
 cv.waitKey(0)

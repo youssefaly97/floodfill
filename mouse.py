@@ -254,7 +254,7 @@ class mouse():
             if x2 < x:
                 x = x2
                 d = UP
-        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.dir == DOWN and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
+        if self.pos[1]+1 < self.size[1] and not(cell & 2) and self.dir == DOWN and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]+1,self.pos[0]])
             if x2 < x:
                 x = x2
@@ -264,7 +264,7 @@ class mouse():
             if x2 < x:
                 x = x2
                 d = LEFT
-        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.dir == RIGHT and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
+        if self.pos[0]+1 < self.size[0] and not(cell & 8) and self.dir == RIGHT and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]+1])
             if x2 < x:
                 x = x2
@@ -274,7 +274,7 @@ class mouse():
             if x2 < x:
                 x = x2
                 d = UP
-        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
+        if self.pos[1]+1 < self.size[1] and not(cell & 2) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1]+1,self.pos[0]]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1]+1,self.pos[0]])
             if x2 < x:
                 x = x2
@@ -284,7 +284,7 @@ class mouse():
             if x2 < x:
                 x = x2
                 d = LEFT
-        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
+        if self.pos[0]+1 < self.size[0] and not(cell & 8) and self.floodMap[self.pos[1],self.pos[0]] > self.floodMap[self.pos[1],self.pos[0]+1]:
             x2 = abs(self.floodMap[self.pos[1],self.pos[0]] - self.floodMap[self.pos[1],self.pos[0]+1])
             if x2 < x:
                 x = x2
@@ -292,57 +292,43 @@ class mouse():
         return d
     
     def getNextDer(self, cell, moved=False):
-        
-        if self.pos[1]-1 >= 0 and not(cell & 1) and self.knownMap[self.pos[0],self.pos[1]-1]==False:
-
-            
+        if self.pos[1]-1 >= 0 and not(cell & 1) and self.knownMap[self.pos[0],self.pos[1]-1]==False:     
             self.stackOfStacks[(self.pos[0],self.pos[1]-1)]=self.pos
             self.stackOfReturn.append(self.pos)
             if not moved:
                 self.pos=self.pos[0],self.pos[1]-1
                 moved=True
 
-
-        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.knownMap[self.pos[0],self.pos[1]+1]==False:
-
-            
+        if self.pos[1]+1 < self.size[1] and not(cell & 2) and self.knownMap[self.pos[0],self.pos[1]+1]==False:
             self.stackOfStacks[(self.pos[0],self.pos[1]+1)]=self.pos
             self.stackOfReturn.append(self.pos)
             if not moved:
                 self.pos=self.pos[0],self.pos[1]+1
                 moved=True
 
-        if self.pos[0]-1 >= 0            and not(cell & 4) and self.knownMap[self.pos[0]-1,self.pos[1]]==False:
-
-
-            
+        if self.pos[0]-1 >= 0            and not(cell & 4) and self.knownMap[self.pos[0]-1,self.pos[1]]==False:            
             self.stackOfStacks[(self.pos[0]-1,self.pos[1])]=self.pos
             self.stackOfReturn.append(self.pos)
             if not moved:
                 self.pos=self.pos[0]-1,self.pos[1]
                 moved=True
 
-        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.knownMap[self.pos[0]+1,self.pos[1]]==False:
-
-
-            
+        if self.pos[0]+1 < self.size[0] and not(cell & 8) and self.knownMap[self.pos[0]+1,self.pos[1]]==False:
             self.stackOfStacks[(self.pos[0]+1,self.pos[1])]=self.pos
             self.stackOfReturn.append(self.pos)
             if not moved:
                 self.pos=self.pos[0]+1,self.pos[1]
                 moved=True
-        
-
 
     def getNumberDir(self, cell):
         numberOfPaths=0
         if self.pos[1]-1 >= 0 and not(cell & 1) and self.knownMap[(self.pos[0],self.pos[1]-1)]==False:
             numberOfPaths+=1
-        if self.pos[1]+1 <= self.size[1] and not(cell & 2)and self.knownMap[(self.pos[0],self.pos[1]+1)]==False:
+        if self.pos[1]+1 < self.size[1] and not(cell & 2)and self.knownMap[(self.pos[0],self.pos[1]+1)]==False:
             numberOfPaths+=1
         if self.pos[0]-1 >= 0            and not(cell & 4)and self.knownMap[(self.pos[0]-1,self.pos[1])]==False:
             numberOfPaths+=1
-        if self.pos[0]+1 <= self.size[1] and not(cell & 8)and self.knownMap[(self.pos[0]+1,self.pos[1])]==False:
+        if self.pos[0]+1 < self.size[1] and not(cell & 8)and self.knownMap[(self.pos[0]+1,self.pos[1])]==False:
             numberOfPaths+=1
         return numberOfPaths
 
