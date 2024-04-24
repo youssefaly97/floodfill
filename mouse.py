@@ -362,7 +362,7 @@ class mouse():
                     self.getNextDer(cell)
                 else:
                     self.pos=self.stackOfReturn.pop()
-                    print("back")
+                    # print("back")
         elif target=="Start":
             self.stackOfPositions.append(self.stackOfStacks[self.pos])
             self.pos=self.stackOfStacks[self.pos]

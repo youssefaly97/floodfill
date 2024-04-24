@@ -173,71 +173,71 @@ map1[(15,0)] += 16
 print(map1.shape)
 print(map1)
 
-# steve = mouse((16,16),(0,15))
-# print("Steve is here")
-# print(steve.where())
+steve = mouse((16,16),(0,15))
+print("Steve is here")
+print(steve.where())
 
-# mg = drawMouse(steve, drawMap(map1, ppc=30), drawMouseMap=False)
-# cv.imshow("Maze", drawMouse(steve, img))
+img = drawMouse(steve, drawMap(map1, ppc=30), drawMouseMap=False)
+cv.imshow("Maze", drawMouse(steve, img))
 
-# stackToCenter = []
-# #img = drawMap(map1,ppc=30)
-# for i in range(0,5000) :#search to center Flood fill
-#     cv.waitKey(1)
-#     pos = steve.where()
-#     #print(map1[pos[1], pos[0]])
-#     stackToCenter = stackCleaner(stackToCenter,pos)
-#     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToCenter, drawMouseMap=True)
-#     cv.imshow("Flood fill search", img)
-#     stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
+stackToCenter = []
+#img = drawMap(map1,ppc=30)
+for i in range(0,5000) :#search to center Flood fill
+    cv.waitKey(1)
+    pos = steve.where()
+    #print(map1[pos[1], pos[0]])
+    stackToCenter = stackCleaner(stackToCenter,pos)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToCenter, drawMouseMap=True)
+    cv.imshow("Flood fill search", img)
+    stackToCenter.append(steve.move(map1[pos[1], pos[0]],"Goal"))
     
-#     #img = drawMouseMap(steve,drawMouse(steve, img))
+    #img = drawMouseMap(steve,drawMouse(steve, img))
     
-#     if cv.waitKey(0) == 27: break
-#     if(steve.isDone("Goal")):#when center found exit for loop
-#         stackToCenter.append(steve.where())
-#         break
+    if cv.waitKey(0) == 27: break
+    if(steve.isDone("Goal")):#when center found exit for loop
+        stackToCenter.append(steve.where())
+        break
 
-# stackToStart = []
-# for i in range(0,5000) :#search to start Flood fill
-#     cv.waitKey(1)
-#     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToStart, drawMouseMap=True)
-#     cv.imshow("Flood fill search",drawMouse(steve, img))
-#     pos = steve.where()
-#     #print(map1[pos[1], pos[0]])
-#     stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
-#     stackToStart = stackCleaner(stackToStart,pos)
+stackToStart = []
+for i in range(0,5000) :#search to start Flood fill
+    cv.waitKey(1)
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), stackToStart, drawMouseMap=True)
+    cv.imshow("Flood fill search",drawMouse(steve, img))
+    pos = steve.where()
+    #print(map1[pos[1], pos[0]])
+    stackToStart.append(steve.move(map1[pos[1], pos[0]],"Start"))
+    stackToStart = stackCleaner(stackToStart,pos)
     
-#     if cv.waitKey(0) == 27: break
-#     if(steve.isDone("Start")):#when center found exit for loop
-#         stackToCenter.append(steve.where())
-#         break
+    if cv.waitKey(0) == 27: break
+    if(steve.isDone("Start")):#when center found exit for loop
+        stackToCenter.append(steve.where())
+        break
 
 
-# '''
-# visitedMap = np.zeros(steve.getSize(),dtype=int)
-# pos = steve.where()
-# print(stackToCenter)
-# print("\n\n")
-# print(stackToStart)
-# print("\n\n")
-# '''
-# shortestStack=stackMerger(stackToCenter,stackToStart)
-# print(shortestStack)
+'''
+visitedMap = np.zeros(steve.getSize(),dtype=int)
+pos = steve.where()
+print(stackToCenter)
+print("\n\n")
+print(stackToStart)
+print("\n\n")
+'''
+shortestStack=stackMerger(stackToCenter,stackToStart)
+print(shortestStack)
 
-# finalStack = []
-# for i in range(0,250) :
-#     img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
-#     cv.imshow("Flood fill search",drawMouse(steve, img))
-#     finalStack.append(steve.moveHere(shortestStack.pop(0)))
-#     if cv.waitKey(0) == 27: break
-#     if(steve.isDone("Goal")):#when center found exit for loop
-#         img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
-#         cv.imshow("Flood fill search",drawMouse(steve, img))
-#         break
+finalStack = []
+for i in range(0,250) :
+    img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
+    cv.imshow("Flood fill search",drawMouse(steve, img))
+    finalStack.append(steve.moveHere(shortestStack.pop(0)))
+    if cv.waitKey(0) == 27: break
+    if(steve.isDone("Goal")):#when center found exit for loop
+        img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
+        cv.imshow("Flood fill search",drawMouse(steve, img))
+        break
 
 
-#............................................................ start of breadth search
+# ............................................................ start of breadth search
 # max = mouse((16,16),(0,15))
 # img = drawMouse(max, drawMap(map1, ppc=30), drawMouseMap=False)
 # cv.imshow("Maze", drawMouse(max, img))
