@@ -307,19 +307,21 @@ for i in range(0,500):
         cv.imshow("Depth search",drawMouse(sam, img))
         break
 
+finalStack=[]
 stackOfPositions=[]
 stackOfPositions=sam.getStackOfPositions()
 print("stackOfPositions")
 print(stackOfPositions)
 #img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
 for i in range(0,500):
-    sam.moveHere(stackOfPositions.pop())
-    img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+    temp=sam.moveHere(stackOfPositions.pop())
+    img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), finalStack,drawMouseMap=False)
     cv.imshow("Depth search",drawMouse(sam, img))
+    finalStack.append(temp)
     pos = sam.where()
     if cv.waitKey(0) == 27: break
     if(sam.isDone("Goal")):#when center found exit for loop
-        img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+        img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
         cv.imshow("Depth search",drawMouse(sam, img))
         break
 
