@@ -12,7 +12,13 @@ DOWN = 3
 LEFT = 4
 
 class mouse():
+    
+
     def __init__(self, size, start ):
+        self.stackOfStacks=np.zeros(size,dtype=tuple)# used for breadth search
+        self.stackOfPositions=[]
+        self.stackOfReturn=[]
+        
         #take start position
         self.pos = start
         self.size = size
@@ -62,6 +68,9 @@ class mouse():
             return queue
 
     def move(self, cell, target):
+        
+
+
         self.wallMap[(self.pos[1],self.pos[0])] = cell
         self.flood(target)# calls recursive flood fill
 
@@ -88,6 +97,11 @@ class mouse():
 
     def getFloodMap(self):
         return self.floodMap
+    
+    def getStackOfStacks(self):
+        return self.stackOfStacks
+        
+
 
     def where(self):
         return self.pos #(self.x, self.y)
@@ -97,6 +111,9 @@ class mouse():
     
     def knownWalls(self):
         return self.wallMap
+    
+    def getStackOfPositions(self):
+        return self.stackOfPositions
     
     def knownTiles(self):
         return self.knownMap
@@ -228,6 +245,7 @@ class mouse():
             self.floodHelper(vistedMap, queue, iteration)
 
     def getMinimumDir(self, cell):
+    
         d = self.dir
         x = 1e12
         
@@ -272,3 +290,96 @@ class mouse():
                 x = x2
                 d = RIGHT
         return d
+    
+    def getNextDer(self, cell, moved=False):
+        
+        if self.pos[1]-1 >= 0 and not(cell & 1) and self.knownMap[self.pos[0],self.pos[1]-1]==False:
+
+            
+            self.stackOfStacks[(self.pos[0],self.pos[1]-1)]=self.pos
+            self.stackOfReturn.append(self.pos)
+            if not moved:
+                self.pos=self.pos[0],self.pos[1]-1
+                moved=True
+
+
+        if self.pos[1]+1 <= self.size[1] and not(cell & 2) and self.knownMap[self.pos[0],self.pos[1]+1]==False:
+
+            
+            self.stackOfStacks[(self.pos[0],self.pos[1]+1)]=self.pos
+            self.stackOfReturn.append(self.pos)
+            if not moved:
+                self.pos=self.pos[0],self.pos[1]+1
+                moved=True
+
+        if self.pos[0]-1 >= 0            and not(cell & 4) and self.knownMap[self.pos[0]-1,self.pos[1]]==False:
+
+
+            
+            self.stackOfStacks[(self.pos[0]-1,self.pos[1])]=self.pos
+            self.stackOfReturn.append(self.pos)
+            if not moved:
+                self.pos=self.pos[0]-1,self.pos[1]
+                moved=True
+
+        if self.pos[0]+1 <= self.size[0] and not(cell & 8) and self.knownMap[self.pos[0]+1,self.pos[1]]==False:
+
+
+            
+            self.stackOfStacks[(self.pos[0]+1,self.pos[1])]=self.pos
+            self.stackOfReturn.append(self.pos)
+            if not moved:
+                self.pos=self.pos[0]+1,self.pos[1]
+                moved=True
+        
+
+
+    def getNumberDir(self, cell):
+        numberOfPaths=0
+        if self.pos[1]-1 >= 0 and not(cell & 1) and self.knownMap[(self.pos[0],self.pos[1]-1)]==False:
+            numberOfPaths+=1
+        if self.pos[1]+1 <= self.size[1] and not(cell & 2)and self.knownMap[(self.pos[0],self.pos[1]+1)]==False:
+            numberOfPaths+=1
+        if self.pos[0]-1 >= 0            and not(cell & 4)and self.knownMap[(self.pos[0]-1,self.pos[1])]==False:
+            numberOfPaths+=1
+        if self.pos[0]+1 <= self.size[1] and not(cell & 8)and self.knownMap[(self.pos[0]+1,self.pos[1])]==False:
+            numberOfPaths+=1
+        return numberOfPaths
+
+
+
+    def depthOfSearch(self, cell, target):
+        if target=="Goal":
+            pos=self.pos
+            self.wallMap[pos[1],pos[0]]=cell
+            if(self.knownMap[pos]==False):
+                numberOfPaths=self.getNumberDir(cell)
+                self.knownMap[pos]=True
+                self.getNextDer(cell)
+
+            else:
+                if(self.getNumberDir(cell)>0):
+                    self.getNextDer(cell)
+                else:
+                    self.pos=self.stackOfReturn.pop()
+                    # print("back")
+        elif target=="Start":
+            self.stackOfPositions.append(self.stackOfStacks[self.pos])
+            self.pos=self.stackOfStacks[self.pos]
+
+
+
+            
+            
+                
+ 
+        
+            
+        
+
+        
+        
+        
+        
+
+

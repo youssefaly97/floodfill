@@ -236,30 +236,92 @@ for i in range(0,250) :
         cv.imshow("Flood fill search",drawMouse(steve, img))
         break
 
-max = mouse((16,16),(0,15))
 
-print("max is here")
-print(max.where())
-#............................................................ start of breadth search
-#create stack
-for i in range(0,5):
-    img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
-    cv.imshow("Breathe search",drawMouse(max, img))
+# ............................................................ start of breadth search
+# max = mouse((16,16),(0,15))
+# img = drawMouse(max, drawMap(map1, ppc=30), drawMouseMap=False)
+# cv.imshow("Maze", drawMouse(max, img))
+
+
+
+
+# print("max is here")
+# print(max.where())
+# #create stack
+# for i in range(0,25):
+#     img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+#     cv.imshow("Breathe search",drawMouse(max, img))
+#     pos = max.where()
+#     max.breatheOfSearch(map1[pos[1], pos[0]],"Goal")
+#     #tempStack=stack from current position to current target
+#     #loop till tempStack is empty
+#         #max.breadthMoveHere(tempStack)
+#         #img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+#         #cv.imshow("Breadth search",drawMouse(max, img))
+#     #add all new branches to stack
+
+#     if cv.waitKey(0) == 27: break
+#     if(max.isDone("Goal")):#when center found exit for loop
+#         img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
+#         cv.imshow("Breathe search",drawMouse(max, img))
+#         break
+
+#............................................................ start of depth search
     
-    #tempStack=stack from current position to current target
-    #loop till tempStack is empty
-        #max.breadthMoveHere(tempStack)
-        #img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
-        #cv.imshow("Breadth search",drawMouse(max, img))
-    #add all new branches to stack
+sam = mouse((16,16),(0,15))
+img = drawMouse(sam, drawMap(map1, ppc=30), drawMouseMap=False)
+cv.imshow("Maze", drawMouse(sam, img))
+
+
+
+
+print("sam is here")
+print(sam.where())
+#create stack
+for i in range(0,500):
+    img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+    cv.imshow("Depth search",drawMouse(sam, img))
+    pos = sam.where()
+    sam.depthOfSearch(map1[pos[1], pos[0]],"Goal")
+
 
     if cv.waitKey(0) == 27: break
-    if(max.isDone("Goal")):#when center found exit for loop
-        img = drawMouse(max, drawMap(max.knownWalls(),ppc=30), drawMouseMap=False)
-        cv.imshow("Breathe search",drawMouse(max, img))
+    if(sam.isDone("Goal")):#when center found exit for loop
+        pos = sam.where()
+        sam.depthOfSearch(map1[pos[1], pos[0]],"Goal")
+        img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+        cv.imshow("Depth search",drawMouse(sam, img))
         break
 
-    
+
+
+for i in range(0,500):
+    img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+    cv.imshow("Depth search",drawMouse(sam, img))
+    pos = sam.where()
+    sam.depthOfSearch(map1[pos[1], pos[0]],"Start")
+
+    if cv.waitKey(0) == 27: break
+    if(sam.isDone("Start")):#when center found exit for loop
+        img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+        cv.imshow("Depth search",drawMouse(sam, img))
+        break
+
+stackOfPositions=[]
+stackOfPositions=sam.getStackOfPositions()
+print("stackOfPositions")
+print(stackOfPositions)
+#img = drawMouse(steve, drawMap(steve.knownWalls(),ppc=30), finalStack, drawMouseMap=False)
+for i in range(0,500):
+    sam.moveHere(stackOfPositions.pop())
+    img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+    cv.imshow("Depth search",drawMouse(sam, img))
+    pos = sam.where()
+    if cv.waitKey(0) == 27: break
+    if(sam.isDone("Goal")):#when center found exit for loop
+        img = drawMouse(sam, drawMap(sam.knownWalls(),ppc=30), drawMouseMap=False)
+        cv.imshow("Depth search",drawMouse(sam, img))
+        break
 
 cv.waitKey(0)
 cv.destroyAllWindows()       
