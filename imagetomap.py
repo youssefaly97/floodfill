@@ -7,20 +7,24 @@ map = np.zeros((h,w),dtype=int)
 map[-1,0] |= 16
 map[int(h/2)-1:int(h/2)+1,int(w/2)-1:int(w/2)+1] |= 32
 
-img = cv.imread("./example maps/maze_92lon.png", cv.IMREAD_GRAYSCALE)
+img = cv.imread("./example maps/maze_93apec.png", cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path.exists()"
 
 ret, th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
 rgb = cv.cvtColor(th1, cv.COLOR_GRAY2RGB)
 
 s = th1.shape
-h_ = int(th1.shape[0]/(h*2))
-w_ = int(th1.shape[1]/(w*2))
+
+print(s)
+h_ = round(th1.shape[0]/(h*2))
+w_ = round(th1.shape[1]/(w*2))
+print(h_)
+print(w_)
 
 #row scanning first
 for j in range(0,h):
-    h1 = int(th1.shape[0]/(h*2))*(j*2+1) # index of the row center, iterates accross the maze rows
-    w1 = int(th1.shape[1]/(w*2)) # index of the column center
+    h1 = round(th1.shape[0]/(h*2))*(j*2+1) # index of the row center, iterates accross the maze rows
+    w1 = round(th1.shape[1]/(w*2)) # index of the column center
 
     m = np.where(th1[h1]>127,1,0) #get a binary array of the row in question form the thresholded image
     b = th1[int(h1-(h_*0.8)):int(h1+(h_*0.8)),:] #take a band of 80% around the row in question
@@ -44,8 +48,8 @@ for i in range(0,th1.shape[1]):
 
 #colum scanning
 for j in range(0,w):
-    h1 = int(th1.shape[0]/(h*2))
-    w1 = int(th1.shape[1]/(w*2))*(j*2+1)
+    h1 = round(th1.shape[0]/(h*2))
+    w1 = round(th1.shape[1]/(w*2))*(j*2+1)
 
     m = np.where(th1[:,w1]>127,1,0)
     b = th1[:,int(w1-(w_*0.8)):int(w1+(w_*0.8))]
@@ -82,7 +86,7 @@ def saveMap(map, filename):
             if(j != map.shape[1]-1): f.write(",")
         f.write("\n")
 
-saveMap(map, "./example maps/maze_92lon.csv")
+saveMap(map, "./example maps/maze_93apec.csv")
 
 #draw map in a window
 cv.imshow("maze", rgb)
